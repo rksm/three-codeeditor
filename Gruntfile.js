@@ -118,6 +118,9 @@ module.exports = function(grunt) {
                + 'rm -rf ace-builds-master master.tar.gz',
         options: {execOptions: {cwd: 'vendor/ace/'}}
       },
+      updateTHREE: {
+        command: 'mkdir -p examples/three/; mv vendor/three/OrbitControls.js examples/three/'
+      },
       runTests: {
         command: '<%= pkg.scripts.test %>',
         options: {execOptions: {}}
@@ -127,6 +130,7 @@ module.exports = function(grunt) {
 
   grunt.registerTask('test', ['jshint', 'mochaTest']);
   grunt.registerTask('updateAce', ['curl-dir:updateAce', 'shell:updateAce']);
-  grunt.registerTask('updateTHREE', ['curl-dir:updateTHREE']);
+  grunt.registerTask('updateTHREE', ['curl-dir:updateTHREE', 'shell:updateTHREE']);
+  grunt.registerTask('updateLibs', ['updateAce', 'updateTHREE']);
   // grunt.registerTask('build', ['curl-dir', 'responsive_images', 'autoprefixer', 'concat', 'uglify', 'jade', 'copy']);
 };
