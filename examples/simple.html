@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Simple THREE codeeditor setup</title>
+    <meta http-equiv="cache-control" content="no-cache" />
+    <meta http-equiv="pragma" content="no-cache" />
+
+  </head>
+  <body>
+    <!--<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.js"></script>-->
+    <!--<script src="http://lively-web.org/users/robertkrahn/just-the-core/html-console.js"></script>-->
+    <script type="text/javascript" src="http://lively-web.org/users/robertkrahn/node-lively2lively/lively2lively-browserified.js?name=three-codeeditor-example&baseURL=http://lively-web.org:8080&autoload=true"></script></style>
+    <script type="text/javascript" src="../vendor/three/three.js"></script>
+    <script type="text/javascript" src="../vendor/three/OrbitControls.js"></script>
+    <script type="text/javascript" src="../vendor/three/threex.domevents.js"></script>
+    <script type="text/javascript" src="../vendor/ace/src-min-noconflict/ace.js"></script>
+    <script type="text/javascript" src="../node_modules/lively.lang/lively.lang.min.js"></script>
+    <script type="text/javascript" src="../tests/helper.js"></script>
+    <script type="text/javascript" src="../index.js"></script>
+    <script type="text/javascript" >
+document.addEventListener("DOMContentLoaded", function() {
+  createThreeWorld(document.body, function(err, world) {
+
+    var codeEditor = new THREE.CodeEditor();
+    world.scene.add(codeEditor);
+    // code in here is evaluated in the context of the connected session
+    codeEditor.position.set(0,200,0)
+    if (world.control) {
+      world.control.target = codeEditor.geometry.boundingBox.center().clone();;
+      world.control.panUp(220);
+      world.control.rotateUp(-.5)
+      world.control.dollyOut(1.2);
+    } else world.camera.lookAt(codeEditor.position);
+
+    codeEditor.setValue("test");
+    
+window.world = world;
+window.codeEditor = codeEditor;
+    // setTimeout(function() {
+    //   codeEditor.destroy();
+    //   world.uninstall(done);
+    // }, 3000);
+  });
+});
+    </script>
+
+  </body>
+</html>
