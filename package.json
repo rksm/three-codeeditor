@@ -13,13 +13,13 @@
     "grunt-contrib-concat": "^0.5.0",
     "grunt-contrib-uglify": "^0.6.0",
     "imagediff": "^1.0.7",
-    "lively.lang": "*",
+    "lively.lang": "^0.3.3",
     "mocha": "*",
     "mocha-phantomjs": "*",
     "three": "*"
   },
   "scripts": {
-    "test": "node_modules/mocha/bin/mocha tests/*-test.js && node_modules/mocha-phantomjs/bin/mocha-phantomjs tests/run-tests.html"
+    "test": "node_modules/mocha-phantomjs/bin/mocha-phantomjs tests/run-tests.html"
   },
   "keywords": [
     "three.js",
