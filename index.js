@@ -76,7 +76,7 @@
       return this.scrollbar || (this.scrollbar = createScrollbar(this.aceEditor));
     }
 
-    this.invalidateScrollbar = function(codeEditor) { codeEditor.scrollbar = null; }
+    this.invalidateScrollbar = function() { this.scrollbar = null; }
 
     this.destroy = function() {
       // FIXME remove mouse handler...
@@ -109,9 +109,9 @@
         borderWidth    = 3,
         width          = 10,
         col            = new THREE.Color(editorStyle.backgroundColor),
-        isDarkTheme = (col.r+col.g+col.b)/3 < .5,
+        isDarkTheme    = (col.r+col.g+col.b)/3 < .5,
         backgroundColor = col.clone().add(col.clone().multiplyScalar(-.4)).getStyle();
-
+console.log(isDarkTheme);
     return {
         height: height * relativeHeight - borderWidth,
         width: width - borderWidth,
