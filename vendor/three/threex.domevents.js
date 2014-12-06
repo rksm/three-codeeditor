@@ -83,6 +83,7 @@ THREEx.DomEvents	= function(camera, domElement)
 	this._$onMouseMove	= function(){ _this._onMouseMove.apply(_this, arguments);	};
 	this._$onMouseDown	= function(){ _this._onMouseDown.apply(_this, arguments);	};
 	this._$onMouseUp	= function(){ _this._onMouseUp.apply(_this, arguments);		};
+	this._$onMouseWheel	= function(){ _this._onMouseWheel.apply(_this, arguments);		};
 	this._$onTouchMove	= function(){ _this._onTouchMove.apply(_this, arguments);	};
 	this._$onTouchStart	= function(){ _this._onTouchStart.apply(_this, arguments);	};
 	this._$onTouchEnd	= function(){ _this._onTouchEnd.apply(_this, arguments);	};
@@ -92,6 +93,7 @@ THREEx.DomEvents	= function(camera, domElement)
 	this._domElement.addEventListener( 'mousemove'	, this._$onMouseMove	, false );
 	this._domElement.addEventListener( 'mousedown'	, this._$onMouseDown	, false );
 	this._domElement.addEventListener( 'mouseup'	, this._$onMouseUp	, false );
+	this._domElement.addEventListener( 'mousewheel'	, this._$onMouseWheel	, false );
 	this._domElement.addEventListener( 'touchmove'	, this._$onTouchMove	, false );
 	this._domElement.addEventListener( 'touchstart'	, this._$onTouchStart	, false );
 	this._domElement.addEventListener( 'touchend'	, this._$onTouchEnd	, false );
@@ -108,6 +110,7 @@ THREEx.DomEvents.prototype.destroy	= function()
 	this._domElement.removeEventListener( 'mousemove'	, this._$onMouseMove	, false );
 	this._domElement.removeEventListener( 'mousedown'	, this._$onMouseDown	, false );
 	this._domElement.removeEventListener( 'mouseup'		, this._$onMouseUp	, false );
+	this._domElement.removeEventListener( 'mousewheel', this._$onMouseWheel	, false );
 	this._domElement.removeEventListener( 'touchmove'	, this._$onTouchMove	, false );
 	this._domElement.removeEventListener( 'touchstart'	, this._$onTouchStart	, false );
 	this._domElement.removeEventListener( 'touchend'	, this._$onTouchEnd	, false );
@@ -122,6 +125,7 @@ THREEx.DomEvents.eventNames	= [
 	"mousemove",
 	"mousedown",
 	"mouseup",
+	"mousewheel",
 	"contextmenu"
 ];
 
@@ -368,6 +372,7 @@ THREEx.DomEvents.prototype._notify	= function(eventName, object3d, origDomEvent,
 
 THREEx.DomEvents.prototype._onMouseDown	= function(event){ return this._onMouseEvent('mousedown', event);	}
 THREEx.DomEvents.prototype._onMouseUp	= function(event){ return this._onMouseEvent('mouseup'	, event);	}
+THREEx.DomEvents.prototype._onMouseWheel	= function(event){ return this._onMouseEvent('mousewheel'	, event);	}
 
 
 THREEx.DomEvents.prototype._onMouseEvent	= function(eventName, domEvent)
