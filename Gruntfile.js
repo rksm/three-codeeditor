@@ -69,8 +69,10 @@ module.exports = function(grunt) {
       'updateTHREE': {
         src: [
           "http://threejs.org/build/three.js",
+          "https://raw.githubusercontent.com/jeromeetienne/threex.domevents/master/threex.domevents.js",
           "http://threejs.org/examples/js/controls/OrbitControls.js",
-          "https://raw.githubusercontent.com/jeromeetienne/threex.domevents/master/threex.domevents.js"
+          "https://raw.githubusercontent.com/mrdoob/three.js/master/examples/js/effects/VREffect.js",
+          "https://raw.githubusercontent.com/mrdoob/three.js/master/examples/js/controls/VRControls.js"
         ],
         dest: 'vendor/three/'
       }
@@ -119,7 +121,7 @@ module.exports = function(grunt) {
         options: {execOptions: {cwd: 'vendor/ace/'}}
       },
       updateTHREE: {
-        command: 'mkdir -p examples/three/; mv vendor/three/OrbitControls.js examples/three/'
+        command: 'mkdir -p examples/three/; mv vendor/three/{OrbitControls,VREffect,VRControls}.js examples/three/'
       },
       runTests: {
         command: '<%= pkg.scripts.test %>',
