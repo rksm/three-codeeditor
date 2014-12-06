@@ -29,6 +29,9 @@
 
         var THREExDOMEvents = new THREEx.DomEvents(world.camera, world.renderer.domElement);
         var codeEditor = new THREE.CodeEditor(world.renderer.domElement, THREExDOMEvents);
+
+        codeEditor.toggleFocusAndBlurOnMouseOverAndOut();
+        world.orbitControl.__defineGetter__("enabled", function() { return !codeEditor.aceEditor.isFocused(); });
     
         world.scene.add(codeEditor);
         codeEditor.position.set(0,200,0)
