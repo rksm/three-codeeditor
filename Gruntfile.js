@@ -19,45 +19,6 @@ module.exports = function(grunt) {
       }
     },
 
-    // concat: {
-    //   options: {sourceMap: true, sourceMapStyle: 'link', separator: ';'},
-    //   three: {
-    //     src: [
-    //       "public/js-compiled/three/three.js",
-    //       "public/js-compiled/three/tquery.js",
-    //       "public/js-compiled/three/tquery.domevent.js",
-    //       // "public/js-compiled/three/stats.min.js",
-    //       // "public/js-compiled/three/BasicShader.js",
-    //       // "public/js-compiled/three/OBJLoader.js",
-    //       // "public/js-compiled/three/SceneLoader.js",
-    //       // "public/js-compiled/three/Loader.js",
-    //       "public/js-compiled/three/OrbitControls.js",
-    //       "public/js-compiled/three/VRControls.js",
-    //       "public/js-compiled/three/VREffect.js",
-    //       // "public/js-compiled/three/threex.videotexture.js",
-    //       // "public/js-compiled/three/threex.webcamtexture.js",
-    //       "public/js-compiled/three/threex.domevents.js",
-    //       // "public/js-compiled/three/helvetiker_regular.typeface.js"
-    //     ],
-    //     dest: 'public/js-compiled/three/three-combined.js'
-    //   }
-    // },
-
-    // uglify: {
-    //   lib: {
-    //     options: {
-    //       sourceMap: true,
-    //       banner: '/*! <%= pkg.name %>-v<%= pkg.version %> '
-    //             + '<%= grunt.template.today("yyyy-mm-dd") %> */\n'
-    //     },
-    //     files: {'public/js-compiled/all.min.js': ["lib/**/*.js"]}
-    //   },
-    //   three: {
-    //     options: { sourceMap: true, },
-    //     files: {'public/js-compiled/three.min.js': ["public/js-compiled/three/three-combined.js"]}
-    //   }
-    // },
-
     // -=-=-=-=-=-=-=-=-=-
     // fetching resources
     // -=-=-=-=-=-=-=-=-=-
@@ -69,48 +30,15 @@ module.exports = function(grunt) {
       'updateTHREE': {
         src: [
           "http://threejs.org/build/three.js",
-          "https://raw.githubusercontent.com/jeromeetienne/threex.domevents/master/threex.domevents.js",
+          // we have modifications in threex.domevents.js
+          // "https://raw.githubusercontent.com/jeromeetienne/threex.domevents/master/threex.domevents.js",
           "http://threejs.org/examples/js/controls/OrbitControls.js",
+          "http://mrdoob.github.io/three.js/examples/js/loaders/ColladaLoader.js",
           "https://raw.githubusercontent.com/mrdoob/three.js/master/examples/js/effects/VREffect.js",
           "https://raw.githubusercontent.com/mrdoob/three.js/master/examples/js/controls/VRControls.js"
         ],
         dest: 'vendor/three/'
       }
-    //   'three': {
-    //     src: [
-    //       // core
-    //       "http://threejs.org/build/three.js",
-    //       "http://threejs.org/examples/js/libs/stats.min.js",
-    //       // shaders
-    //       "http://threejs.org/examples/js/shaders/BasicShader.js",
-    //       // loaders / exporters
-    //       "http://threejs.org/examples/js/loaders/OBJLoader.js",
-    //       "http://threejs.org/examples/js/loaders/SceneLoader.js",
-    //       "https://raw.githubusercontent.com/mrdoob/three.js/master/editor/js/Loader.js",
-    //       // camera control
-    //       "http://threejs.org/examples/js/controls/OrbitControls.js",
-    //       // vr
-    //       "http://lively-web.org/webvr-resources/this-is-my-horse/js/VRControls.js",
-    //       "http://lively-web.org/webvr-resources/this-is-my-horse/js/VREffect.js",
-    //       // threex
-    //       "http://jeromeetienne.github.io/threex.videotexture/threex.videotexture.js",
-    //       "http://jeromeetienne.github.io/threex.videotexture/threex.webcamtexture.js",
-    //       "https://raw.githubusercontent.com/jeromeetienne/threex.domevents/master/threex.domevents.js",
-    //       // font
-    //       "http://threejs.org/examples/fonts/helvetiker_regular.typeface.js",
-    //       // tquery
-    //       "https://raw.githubusercontent.com/jeromeetienne/tquery/master/build/tquery.js",
-    //       "https://raw.githubusercontent.com/jeromeetienne/tquery/master/plugins/domevent/tquery.domevent.js"
-    //     ],
-    //     dest: 'public/js-compiled/three/'
-    //   },
-    //   'keybindingLib': {
-    //     src: [
-    //       "https://raw.githubusercontent.com/ccampbell/mousetrap/master/mousetrap.js",
-    //       "https://raw.githubusercontent.com/ccampbell/mousetrap/master/mousetrap.min.js"
-    //     ],
-    //     dest: 'public/js-compiled/browser-helper/'
-    //   }
     },
 
     shell: {
@@ -121,7 +49,7 @@ module.exports = function(grunt) {
         options: {execOptions: {cwd: 'vendor/ace/'}}
       },
       updateTHREE: {
-        command: 'mkdir -p examples/three/; mv vendor/three/{OrbitControls,VREffect,VRControls}.js examples/three/'
+        command: 'mkdir -p examples/three/; mv vendor/three/{ColladaLoader,OrbitControls,VREffect,VRControls}.js examples/three/'
       },
       runTests: {
         command: '<%= pkg.scripts.test %>',
