@@ -42,7 +42,8 @@
 
     // input event setup
     mouseevents.addMouseEventListener(THREExDOMEvents, this);
-  
+    this.scrollSpeed = 1;
+
     texture.needsUpdate	= true;
   };
   
