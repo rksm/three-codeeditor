@@ -2,13 +2,21 @@
 
 ;(function() {
 
+    // "imports"
+  var aceHelper, rendering, canvas2d, domevents, mouseevents;
+
+  // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
   THREE.CodeEditor = function(canvas3dElement, THREExDOMEvents) {
 
-    // "imports"
-    var aceHelper    = THREE.CodeEditor.aceHelper,
-        rendering    = THREE.CodeEditor.rendering,
-        canvas2d     = THREE.CodeEditor.canvas2d,
-        mouseevents  = THREE.CodeEditor.mouseevents;
+    // "imports" assigned here b/c they are first available after this module got defined
+    aceHelper    = THREE.CodeEditor.aceHelper,
+    rendering    = THREE.CodeEditor.rendering,
+    canvas2d     = THREE.CodeEditor.canvas2d,
+    mouseevents  = THREE.CodeEditor.mouseevents;
+    domevents    = THREE.CodeEditor.domevents;
+
+    // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
     this.THREExDOMEvents = THREExDOMEvents;
   
@@ -25,7 +33,10 @@
         material= new THREE.MeshBasicMaterial({
           color: "white", map: texture,
           side: THREE.DoubleSide});
-  
+
+    // var maxAnisotropy = renderer.getMaxAnisotropy();
+		// texture.anisotropy = 16;
+
     THREE.Mesh.call(this, editorGeo, material);
   
     editorGeo.computeBoundingBox();
@@ -52,10 +63,35 @@
   (function() {
   
     this.isCodeEditor3D = true;
-  
+
+    // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+    // initialize-release
+    // -=-=-=-=-=-=-=-=-=-
+
+    this.destroy = function() {
+      // FIXME remove mouse handler...
+      this.canvas2d.cleanup();
+      this.canvas2d = null;
+      this.aceEditor.cleanup();
+      this.aceEditor = null;
+    };
+
+    // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+    // editor behavior  
+    // -=-=-=-=-=-=-=-=-=-
+
     this.setValue = function(text) {
       this.aceEditor.setValue(text);
     };
+    
+    this.insert = function(text, noTransform) {
+      // insert text at cursor
+      this.aceEditor.insert(text, noTransform);
+    };
+
+    // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+    // input events
+    // -=-=-=-=-=-=-
 
     this.toggleFocusAndBlurOnMouseOverAndOut = function() {
       if (this._focusOnOver) {
@@ -63,8 +99,8 @@
       } else {
         method = "addEventListener";
         this._focusOnOver = function(evt) {
-          var evts = THREE.CodeEditor.mouseevents;
-          if (!evts.isLeftMouseButtonPressed(evt) && !evts.isRightMouseButtonPressed(evt))
+          if (evt.target !== this) return;
+          if (!domevents.isLeftMouseButtonPressed(evt) && !domevents.isRightMouseButtonPressed(evt))
             this.aceEditor.focus();
         }.bind(this);
         this._blurOnOut = function(evt) { this.aceEditor.blur(); }.bind(this);
@@ -79,13 +115,43 @@
 
     this.invalidateScrollbar = function() { this.scrollbar = null; }
 
-    this.destroy = function() {
-      // FIXME remove mouse handler...
-      this.canvas2d.cleanup();
-      this.canvas2d = null;
-      this.aceEditor.cleanup();
-      this.aceEditor = null;
+    this.clickState = {
+      lastClickTime: 0,
+      doubleClickTriggerTime: 500,
+      scrollbarClickPoint: null
     };
+    
+    this.onMouseDown = function(evt) {
+      // clicked on scrollbar?
+      if (mouseevents.processScrollbarMouseEvent(
+          this.THREExDOMEvents, this, this.clickState, evt)) return true;
+
+      var aceCoords = mouseevents.raycastIntersectionToDomXY(evt.intersect, this.aceEditor.container);
+      mouseevents.reemit3DMouseEvent(this.THREExDOMEvents, evt.origDomEvent, this.clickState, this, aceCoords);
+    }
+
+    this.onMouseMove = function(evt) {
+      var aceCoords = mouseevents.raycastIntersectionToDomXY(evt.intersect, this.aceEditor.container);
+      mouseevents.reemit3DMouseEvent(this.THREExDOMEvents, evt.origDomEvent, this.clickState, this, aceCoords);
+    }
+
+    this.onMouseWheel = function(evt) {
+      var aceCoords = mouseevents.raycastIntersectionToDomXY(evt.intersect, this.aceEditor.container);
+      mouseevents.reemit3DMouseEvent(this.THREExDOMEvents, evt.origDomEvent, this.clickState, this, aceCoords);
+    }
+
+    // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+    // geometry
+    // -=-=-=-=-
+
+    this.getGlobalVertice = function(i) {
+      return this.geometry.vertices[i].clone().applyMatrix4(this.matrixWorld);
+    };
+
+    this.topLeft = function() { return this.getGlobalVertice(0); };
+    this.topRight = function() { return this.getGlobalVertice(1); };
+    this.bottomLeft = function() { return this.getGlobalVertice(2); };
+    this.bottomRight = function() { return this.getGlobalVertice(3); };
 
   }).call(THREE.CodeEditor.prototype);
   
@@ -98,7 +164,7 @@
   
   function plane(a,b,c,d) {
     var vec1 = b.clone().sub(a), vec2 = d.clone().sub(a);
-    return new THREE.PlaneGeometry(vec1.length(), vec2.length(), 10,10);
+    return new THREE.PlaneGeometry(vec1.length(), vec2.length(), 1,1);
   }
 
   function createScrollbar(aceEditor) {
@@ -112,7 +178,6 @@
         col            = new THREE.Color(editorStyle.backgroundColor),
         isDarkTheme    = (col.r+col.g+col.b)/3 < .5,
         backgroundColor = col.clone().add(col.clone().multiplyScalar(-.4)).getStyle();
-console.log(isDarkTheme);
     return {
         height: height * relativeHeight - borderWidth,
         width: width - borderWidth,
