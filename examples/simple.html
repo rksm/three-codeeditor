@@ -7,49 +7,93 @@
     <meta http-equiv="pragma" content="no-cache" />
 
   </head>
-  <body>
-    <!--<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.js"></script>-->
-    <!--<script src="http://lively-web.org/users/robertkrahn/just-the-core/html-console.js"></script>-->
-    <script type="text/javascript" src="http://lively-web.org/users/robertkrahn/node-lively2lively/lively2lively-browserified.js?name=three-codeeditor-example&baseURL=http://lively-web.org:8080&autoload=true"></script></style>
+  <body style="margin:0;">
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.js"></script>
+<script src="http://lively-web.org/users/robertkrahn/just-the-core/html-console.js"></script>
+
     <script type="text/javascript" src="../vendor/three/three.js"></script>
     <script type="text/javascript" src="three/OrbitControls.js"></script>
+    <script type="text/javascript" src="three/VRControls.js"></script>
+    <script type="text/javascript" src="three/VREffect.js"></script>
+    <script type="text/javascript" src="../../js-compiled/three/TransformControls.js"></script>
+    <script type="text/javascript" src="three/ColladaLoader.js"></script>
     <script type="text/javascript" src="../vendor/three/threex.domevents.js"></script>
+
+<script type="text/javascript" src="http://jeromeetienne.github.io/threex.videotexture/threex.videotexture.js"></script>
+<script type="text/javascript" src="http://jeromeetienne.github.io/threex.videotexture/threex.webcamtexture.js"></script>
+
+<script type="text/javascript" src="../../js-compiled/three/tquery.js"></script>
+<script type="text/javascript" src="../../expt/tquery-interface.js"></script>
+
+<script type="text/javascript" src="../../js-compiled/three/dat.gui.js"></script>
+
+<script type="text/javascript" src="../../js-compiled/state-machine.js"></script>
+<script type="text/javascript" src="../../js-compiled/browser-helper/mousetrap.js"></script>
+
     <script type="text/javascript" src="../vendor/ace/src-noconflict/ace.js"></script>
-    <script type="text/javascript" src="../node_modules/lively.lang/lively.lang.min.js"></script>
     <script type="text/javascript" src="../lib/helper.js"></script>
     <script type="text/javascript" src="../index.js"></script>
+    <script type="text/javascript" src="../lib/commands.js"></script>
     <script type="text/javascript" src="../lib/ace-helper.js"></script>
     <script type="text/javascript" src="../lib/canvas2d.js"></script>
+    <script type="text/javascript" src="../lib/domevents.js"></script>
+    <script type="text/javascript" src="../lib/html-three-conversion.js"></script>
     <script type="text/javascript" src="../lib/mouseevents.js"></script>
     <script type="text/javascript" src="../lib/rendering.js"></script>
 
+    <script type="text/javascript" src="http://lively-web.org/users/robertkrahn/node-lively2lively/lively2lively-browserified.js?name=three-codeeditor-example&baseURL=http://lively-web.org:8080&autoload=true"></script></style>
+  <!--<input type="button" class="button" value="Start VR Mode" />-->
+
     <script type="text/javascript" >
       var htmlCode = document.documentElement.innerHTML;
-      createThreeWorld(document.body, {useOrbitControl: true},function(err, world) {
+      var useVR = !!navigator.mozGetVRDevices || !!navigator.getVRDevices;
+      
+      createThreeWorld(document.body, {useOrbitControl: true, useVR: useVR},function(err, world) {
+
+        setupTQuery(world);
 
         var THREExDOMEvents = new THREEx.DomEvents(world.camera, world.renderer.domElement);
         var codeEditor = new THREE.CodeEditor(world.renderer.domElement, THREExDOMEvents);
 
         codeEditor.toggleFocusAndBlurOnMouseOverAndOut();
-        world.orbitControl.__defineGetter__("enabled", function() { return !codeEditor.aceEditor.isFocused(); });
-    
+
         world.scene.add(codeEditor);
         codeEditor.position.set(0,200,0)
         if (world.orbitControl) {
+
+world.orbitControl.addEventListener('change', function(evt) { console.log('orbit change'); console.log(Object.keys(evt)); })
+world.orbitControl.addEventListener('start', function(evt) { console.log('orbit start'); })
+world.orbitControl.addEventListener('end', function(evt) { console.log('orbit end'); })
+          world.orbitControl.__defineGetter__("enabled", function() { return !codeEditor.aceEditor.isFocused(); });
           world.orbitControl.target = codeEditor.geometry.boundingBox.center().clone();;
           world.orbitControl.panUp(220);
           world.orbitControl.rotateUp(-.5)
           world.orbitControl.dollyOut(1.2);
+
         } else world.camera.lookAt(codeEditor.position);
 
-        codeEditor.aceEditor.setOption("mode", "ace/mode/html");
-        codeEditor.setValue(htmlCode);
-    
+      // -=-=-=-=-=-=-=-=-=-=-=-=-
+      // prepare editor contents
+      // -=-=-=-=-=-=-=-=-=-=-=-=-
+        if (false) {
+          codeEditor.aceEditor.setOption("mode", "ace/mode/html");
+          codeEditor.setValue(htmlCode);
+        } else {
+          codeEditor.aceEditor.setOption("mode", "ace/mode/javascript");
+          codeEditor.setValue("1 + 2");
+        }
+
+  		// 	var fullScreenButton = document.querySelector('.button');
+  		// 	fullScreenButton.onclick = function() { world.vr.effect && world.vr.effect.setFullScreen( true ); };
+
         // For debugging
         window.world = world;
         window.codeEditor = codeEditor;
       });
     </script>
 
+
+    <script type="text/javascript" src="../lib/experiments.js"></script>
   </body>
 </html>
+

@@ -48,7 +48,7 @@
 // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 
-      createThreeWorld(document.body, function(err, world) {
+      createThreeWorld(document.body, {useVR: true}, function(err, world) {
     
         var THREExDOMEvents = new THREEx.DomEvents(world.camera, world.renderer.domElement);
         var codeEditor = new THREE.CodeEditor(world.renderer.domElement, THREExDOMEvents);
