@@ -85,6 +85,7 @@ world.orbitControl.addEventListener('end', function(evt) { console.log('orbit en
       // prepare editor contents
       // -=-=-=-=-=-=-=-=-=-=-=-=-
         codeEditor.aceEditor.keyBinding.addKeyboardHandler(ace.require("ace/keyboard/emacs").handler);
+        THREE.CodeEditor.autocomplete.installDynamicJSCompleterInto(codeEditor.aceEditor);
         codeEditor.aceEditor.setOptions({
           enableBasicAutocompletion: true,
           enableLiveAutocompletion: false,
