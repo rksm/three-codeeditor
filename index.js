@@ -31,7 +31,7 @@
     // initialize-release
     // -=-=-=-=-=-=-=-=-=-
 
-    this.initialize = function(canvas3dElement, THREExDOMEvents) {
+    this.initialize = function(canvas3dElement, THREExDOMEvents, optAceEditor) {
       imports();
 
       this.THREExDOMEvents = THREExDOMEvents;
@@ -59,14 +59,21 @@
       this.position.copy(editorGeo.boundingBox.center());
     
       // creating the ace editor instance that will work behind the scenes as our "model"
-      var aceEditor = this.aceEditor = aceHelper.createAceEditor(
-        canvas3dElement.offsetLeft, canvas3dElement.offsetTop, width, height);
+      var aceEditor;
+      if (optAceEditor) this.aceEditor = aceEditor = optAceEditor
+      else {
+        aceEditor = this.aceEditor = aceHelper.createAceEditor(
+          canvas3dElement.offsetLeft, canvas3dElement.offsetTop, width, height);
+      }
+
+      aceEditor.parent3d = this; // backlink for autocompleter
+
       var self = this;
       aceEditor.renderer.on("afterRender", function() { rendering.onAceEditorAfterRenderEvent(aceEditor, self); });
       aceEditor.renderer.on("themeChange", function() { self.invalidateScrollbar(); });
       aceEditor.renderer.on("resize",      function() { self.invalidateScrollbar(); });
       aceEditor.renderer.on("autosize",    function() { self.invalidateScrollbar(); });
-    
+
       texture.needsUpdate	= true;
     
       this.addMouseEventListeners();
