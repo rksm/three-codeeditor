@@ -4,7 +4,7 @@
 
     // "imports"
   var aceHelper, rendering, canvas2d, domevents,
-      mouseevents, commands, htmlTHREEConversion;
+      mouseevents, commands, raycasting;
   // "imports" assigned here b/c they are first available after this module got defined
   function imports() {
     aceHelper           = THREE.CodeEditor.aceHelper,
@@ -13,7 +13,7 @@
     mouseevents         = THREE.CodeEditor.mouseevents;
     domevents           = THREE.CodeEditor.domevents;
     commands            = THREE.CodeEditor.commands;
-    htmlTHREEConversion = THREE.CodeEditor["html-three-conversion"];
+    raycasting          = THREE.CodeEditor.raycasting;
   }
 
   // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
@@ -113,18 +113,27 @@
       this._onMouseDown  = function(evt) { return this.onMouseDown(evt); }.bind(this);
       this._onMouseMove  = function(evt) { return this.onMouseMove(evt); }.bind(this);
       this._onMouseWheel = function(evt) { return this.onMouseWheel(evt); }.bind(this);
+      this._onMouseOver = function(evt) {  return this.onMouseOver(evt); }.bind(this);
+      this._onMouseOut = function(evt) { return this.onMouseOut(evt); }.bind(this);
+
       this.THREExDOMEvents.addEventListener(this, 'mousedown', this._onMouseDown, false);
       this.THREExDOMEvents.addEventListener(this, 'mousemove', this._onMouseMove, false);
       this.THREExDOMEvents.addEventListener(this, 'mousewheel', this._onMouseWheel, false);
+      this.THREExDOMEvents.addEventListener(this, 'mouseover', this._onMouseOver, false);
+      this.THREExDOMEvents.addEventListener(this, 'mouseout', this._onMouseOut, false);
     }
 
     this.removeMouseEventListeners = function() {
-      this._onMouseDown &&  this.THREExDOMEvents.removeEventListener(this, 'mousedown', this._onMouseDown, false);
-      this._onMouseMove &&  this.THREExDOMEvents.removeEventListener(this, 'mousemove', this._onMouseMove, false);
+      this._onMouseDown  && this.THREExDOMEvents.removeEventListener(this, 'mousedown', this._onMouseDown, false);
+      this._onMouseMove  && this.THREExDOMEvents.removeEventListener(this, 'mousemove', this._onMouseMove, false);
       this._onMouseWheel && this.THREExDOMEvents.removeEventListener(this, 'mousewheel', this._onMouseWheel, false);
+      this._onMouseOver  && this.THREExDOMEvents.removeEventListener(this, "mouseover", this._onMouseOver, false);
+      this._onMouseOut   && this.THREExDOMEvents.removeEventListener(this, "mouseout", this._onMouseOut, false);
       this._onMouseDown = null;
       this._onMouseMove = null;
       this._onMouseWheel = null;
+      this._onMouseOver = null;
+      this._onMouseOut = null;
     }
 
     this.onMouseDown = function(evt) {
@@ -132,35 +141,34 @@
       if (mouseevents.processScrollbarMouseEvent(
           this.THREExDOMEvents, this, this.clickState, evt)) return true;
 
-      var aceCoords = htmlTHREEConversion.raycastIntersectionToDomXY(evt.intersect, this.aceEditor.container);
+      var aceCoords = raycasting.raycastIntersectionToDomXY(evt.intersect, this.aceEditor.container);
       mouseevents.reemit3DMouseEvent(this.THREExDOMEvents, evt.origDomEvent, this.clickState, this, aceCoords);
     }
 
     this.onMouseMove = function(evt) {
-      var aceCoords = htmlTHREEConversion.raycastIntersectionToDomXY(evt.intersect, this.aceEditor.container);
+      var aceCoords = raycasting.raycastIntersectionToDomXY(evt.intersect, this.aceEditor.container);
       mouseevents.reemit3DMouseEvent(this.THREExDOMEvents, evt.origDomEvent, this.clickState, this, aceCoords);
     }
 
     this.onMouseWheel = function(evt) {
-      var aceCoords = htmlTHREEConversion.raycastIntersectionToDomXY(evt.intersect, this.aceEditor.container);
+      var aceCoords = raycasting.raycastIntersectionToDomXY(evt.intersect, this.aceEditor.container);
       mouseevents.reemit3DMouseEvent(this.THREExDOMEvents, evt.origDomEvent, this.clickState, this, aceCoords);
     }
 
-    this.toggleFocusAndBlurOnMouseOverAndOut = function() {
-      if (this._focusOnOver) {
-        var method = "removeEventListener";
-      } else {
-        method = "addEventListener";
-        this._focusOnOver = function(evt) {
-          if (evt.target !== this) return;
-          if (!domevents.isLeftMouseButtonPressed(evt) && !domevents.isRightMouseButtonPressed(evt))
-            this.aceEditor.focus();
-        }.bind(this);
-        this._blurOnOut = function(evt) { this.aceEditor.blur(); }.bind(this);
-      }
-      this.THREExDOMEvents[method](this, "mouseover", this._focusOnOver, false);
-      this.THREExDOMEvents[method](this, "mouseout", this._blurOnOut, false);
-    }
+    this.onMouseOver = function(evt) {
+return;
+      if (evt.target !== this) return;
+      var noMouse = !mouseevents.isLeftMouseButtonPressed(evt)
+                 && !mouseevents.isRightMouseButtonPressed(evt);
+      if (noMouse) this.aceEditor.focus();
+      if (noMouse) console.log("ficussed!!");
+    };
+
+    this.onMouseOut = function(evt) {
+return;
+      console.log("blur!!");
+      this.aceEditor.blur();
+    };
 
     this.getScrollbar = function() {
       return this.scrollbar || (this.scrollbar = createScrollbar(this.aceEditor));
@@ -226,12 +234,12 @@
       var margin = 50;
       var size = this.geometry.boundingBox.size()
       var dist = (size.y+margin) / 2 / Math.tan(Math.PI * camera.fov / 360);
-    	var center = htmlTHREEConversion.pickingRay({x:0,y:0}, camera).ray.at(dist);
+    	var center = raycasting.pickingRay({x:0,y:0}, camera).ray.at(dist);
 
       this.position.copy(center);
       this.lookAt(camera.position);
       
-    // 	var projectionPoint = htmlTHREEConversion.pickingRay({x:-1,y:0}, camera).ray.at(dist);
+    // 	var projectionPoint = raycasting.pickingRay({x:-1,y:0}, camera).ray.at(dist);
     // 	var delta = projectionPoint.clone().sub(center);
     //   align(this, this.topLeft(), projectionPoint)
     //   this.position.copy(projectionPoint.clone());

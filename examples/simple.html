@@ -15,8 +15,8 @@
     <script type="text/javascript" src="three/OrbitControls.js"></script>
     <script type="text/javascript" src="three/VRControls.js"></script>
     <script type="text/javascript" src="three/VREffect.js"></script>
-    <script type="text/javascript" src="../../js-compiled/three/TransformControls.js"></script>
     <script type="text/javascript" src="three/ColladaLoader.js"></script>
+    <script type="text/javascript" src="three/TransformControls.js"></script>
     <script type="text/javascript" src="../vendor/three/threex.domevents.js"></script>
 
 <script type="text/javascript" src="http://jeromeetienne.github.io/threex.videotexture/threex.videotexture.js"></script>
@@ -41,9 +41,11 @@
     <script type="text/javascript" src="../lib/ace-helper.js"></script>
     <script type="text/javascript" src="../lib/canvas2d.js"></script>
     <script type="text/javascript" src="../lib/domevents.js"></script>
-    <script type="text/javascript" src="../lib/html-three-conversion.js"></script>
+    <script type="text/javascript" src="../lib/raycasting.js"></script>
     <script type="text/javascript" src="../lib/mouseevents.js"></script>
     <script type="text/javascript" src="../lib/rendering.js"></script>
+    <script type="text/javascript" src="../lib/autocomplete.js"></script>
+
 
     <script type="text/javascript" src="http://lively-web.org/users/robertkrahn/node-lively2lively/lively2lively-browserified.js?name=three-codeeditor-example&baseURL=http://lively-web.org:8080&autoload=true"></script></style>
   <!--<input type="button" class="button" value="Start VR Mode" />-->
@@ -58,11 +60,13 @@
 
         var THREExDOMEvents = new THREEx.DomEvents(world.camera, world.renderer.domElement);
         var codeEditor = new THREE.CodeEditor(world.renderer.domElement, THREExDOMEvents);
-
-        codeEditor.toggleFocusAndBlurOnMouseOverAndOut();
-
         world.scene.add(codeEditor);
         codeEditor.position.set(0,200,0)
+
+        // var codeEditor2 = new THREE.CodeEditor(world.renderer.domElement, THREExDOMEvents);
+        // world.scene.add(codeEditor2);
+        // codeEditor2.position.set(-400,200,0)
+
         if (world.orbitControl) {
 
 world.orbitControl.addEventListener('change', function(evt) { console.log('orbit change'); console.log(Object.keys(evt)); })
