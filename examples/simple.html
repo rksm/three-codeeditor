@@ -57,12 +57,10 @@
       THREE.CodeEditor.World.create(document.body, {useOrbitControl: true, useVR: useVR}, function(err, world) {
         setupTQuery(world);
 
-        var THREExDOMEvents = new THREEx.DomEvents(world.camera, world.renderer.domElement);
-        var codeEditor = new THREE.CodeEditor(world.renderer.domElement, THREExDOMEvents);
+        var codeEditor = new THREE.CodeEditor(world.renderer.domElement, world.events);
         world.scene.add(codeEditor);
         codeEditor.position.set(0,200,0)
 
-        // var codeEditor2 = new THREE.CodeEditor(world.renderer.domElement, THREExDOMEvents);
         // world.scene.add(codeEditor2);
         // codeEditor2.position.set(-400,200,0)
 
@@ -92,8 +90,6 @@
           codeEditor.setValue("1 + 2");
         }
 
-  		// 	var fullScreenButton = document.querySelector('.button');
-  		// 	fullScreenButton.onclick = function() { world.vr.effect && world.vr.effect.setFullScreen( true ); };
 
         // For debugging
         window.world = world;

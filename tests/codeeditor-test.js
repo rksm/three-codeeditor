@@ -31,10 +31,9 @@ describe('three-codeeditor', function() {
 
   it('renders text', function(done) {
     var testName = this.test.fullTitle();
-    createThreeWorld(document.body, function(err, world) {
+    THREE.World.create(document.body, function(err, world) {
 
-      var THREExDOMEvents = new THREEx.DomEvents(world.camera, world.renderer.domElement);
-      var codeEditor = new THREE.CodeEditor(world.renderer.domElement, THREExDOMEvents);
+      var codeEditor = new THREE.CodeEditor(world.renderer.domElement, world.events);
 
       world.scene.add(codeEditor);
       codeEditor.setValue("test");

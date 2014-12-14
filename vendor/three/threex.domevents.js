@@ -135,37 +135,20 @@ THREEx.DomEvents.eventNames	= [
 ];
 
 THREEx.DomEvents.prototype._getRelativeMouseXY	= function(domEvent){
-	var element = domEvent.target || domEvent.srcElement;
-	if (element.nodeType === 3) {
-		element = element.parentNode; // Safari fix -- see http://www.quirksmode.org/js/events_properties.html
-	}
+  // Converts the browser global (page) x/y coordinates
+  // into relative -1/1 values. These can be used by THREE for raycasting.
 
-	//get the real position of an element relative to the page starting point (0, 0)
-	//credits go to brainjam on answering http://stackoverflow.com/questions/5755312/getting-mouse-position-relative-to-content-area-of-an-element
-	var elPosition	= { x : 0 , y : 0};
-	var tmpElement	= element;
-	//store padding
-	var style	= getComputedStyle(tmpElement, null);
-	elPosition.y += parseInt(style.getPropertyValue("padding-top"), 10);
-	elPosition.x += parseInt(style.getPropertyValue("padding-left"), 10);
-	//add positions
-	do {
-		elPosition.x	+= tmpElement.offsetLeft;
-		elPosition.y	+= tmpElement.offsetTop;
-		style		= getComputedStyle(tmpElement, null);
+  var domElement = domEvent.target || domEvent.srcElement,
+      x = domEvent.pageX, y = domEvent.pageY;
 
-		elPosition.x	+= parseInt(style.getPropertyValue("border-left-width"), 10);
-		elPosition.y	+= parseInt(style.getPropertyValue("border-top-width"), 10);
-	} while(tmpElement = tmpElement.offsetParent);
-
-	var elDimension	= {
-		width	: (element === window) ? window.innerWidth	: element.offsetWidth,
-		height	: (element === window) ? window.innerHeight	: element.offsetHeight
-	};
+	var rect = domElement.getBoundingClientRect(),
+  		relX = (x - rect.left) / rect.width,
+  		relY = (y - rect.top) / rect.height;
 
 	return {
-		x : +((domEvent.pageX - elPosition.x) / elDimension.width ) * 2 - 1,
-		y : -((domEvent.pageY - elPosition.y) / elDimension.height) * 2 + 1
+		x :  (relX * 2) - 1,
+		y : -(relY * 2) + 1,
+		z: 0.5
 	};
 };
 
@@ -375,7 +358,7 @@ THREEx.DomEvents.prototype._notify	= function(eventName, object3d, origDomEvent,
 /********************************************************************************/
 // # handle mouse events
 
-THREEx.DomEvents.prototype._onMouseDown	= function(event){ return this._onMouseEvent('mousedown', event);	}
+THREEx.DomEvents.prototype._onMouseDown	= function(event){ console.log("x down"); return this._onMouseEvent('mousedown', event);	}
 THREEx.DomEvents.prototype._onMouseUp	= function(event){ return this._onMouseEvent('mouseup'	, event);	}
 THREEx.DomEvents.prototype._onMouseWheel	= function(event){ return this._onMouseEvent('mousewheel'	, event);	}
 
