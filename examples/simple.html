@@ -9,8 +9,8 @@
   </head>
   <body style="margin:0;">
 
-    <!--<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.js"></script>-->
-    <!--<script src="http://lively-web.org/users/robertkrahn/just-the-core/html-console.js"></script>-->
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.js"></script>
+    <script src="http://lively-web.org/users/robertkrahn/just-the-core/html-console.js"></script>
 
     <script type="text/javascript" src="../vendor/three/three.js"></script>
     <script type="text/javascript" src="js/three/OrbitControls.js"></script>
@@ -46,7 +46,7 @@
     <script type="text/javascript" src="../lib/mouseevents.js"></script>
     <script type="text/javascript" src="../lib/rendering.js"></script>
     <script type="text/javascript" src="../lib/autocomplete.js"></script>
-    <script type="text/javascript" src="../../three-world/index.js"></script>
+    <script type="text/javascript" src="../../three-world/world.js"></script>
 
     <script type="text/javascript" src="http://lively-web.org/users/robertkrahn/node-lively2lively/lively2lively-browserified.js?name=three-codeeditor-example&baseURL=http://lively-web.org:8080&autoload=true"></script></style>
 
@@ -55,9 +55,9 @@
       var useVR = !!navigator.mozGetVRDevices || !!navigator.getVRDevices;
       THREE.World.create(document.body, {useOrbitControl: true, useVR: useVR}, function(err, world) {
 
-world.renderer.setClearColor(0x333F47, 1);
-
-world.camera.position.set(0,200,320);
+        world.renderer.setClearColor(0x333F47, 1);
+        
+        world.camera.position.set(0,200,320);
 
         var DOMEvents = THREEx.DomEvents;
         world.events = new DOMEvents(world.camera, world.renderer.domElement);
@@ -72,7 +72,7 @@ world.camera.position.set(0,200,320);
 
         if (world.orbitControl) {
           // world.orbitControl.target = codeEditor.geometry.boundingBox.center().clone();
-          world.orbitControl.target = codeEditor.position;
+          world.orbitControl.target = codeEditor.position.clone();
           // world.orbitControl.panUp(220);
           // world.orbitControl.rotateUp(-.5)
           // world.orbitControl.dollyOut(1.2);
@@ -98,6 +98,7 @@ world.camera.position.set(0,200,320);
           codeEditor.setValue("1 + 2");
         }
 
+        world.startLoop();
 
         // For debugging
         window.world = world;
