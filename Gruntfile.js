@@ -55,12 +55,11 @@ module.exports = function(grunt) {
         command: '<%= pkg.scripts.test %>',
         options: {execOptions: {}}
       }
-    },
+    }
   });
 
   grunt.registerTask('test', ['jshint', 'mochaTest']);
   grunt.registerTask('updateAce', ['curl-dir:updateAce', 'shell:updateAce']);
   grunt.registerTask('updateTHREE', ['curl-dir:updateTHREE', 'shell:updateTHREE']);
   grunt.registerTask('updateLibs', ['updateAce', 'updateTHREE']);
-  // grunt.registerTask('build', ['curl-dir', 'responsive_images', 'autoprefixer', 'concat', 'uglify', 'jade', 'copy']);
 };
