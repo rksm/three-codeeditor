@@ -26,18 +26,6 @@ module.exports = function(grunt) {
       'updateAce': {
         src: ['https://github.com/ajaxorg/ace-builds/archive/master.tar.gz'],
         dest: 'vendor/ace/'
-      },
-      'updateTHREE': {
-        src: [
-          "http://threejs.org/build/three.js",
-          // we have modifications in threex.domevents.js
-          // "https://raw.githubusercontent.com/jeromeetienne/threex.domevents/master/threex.domevents.js",
-          "http://threejs.org/examples/js/controls/OrbitControls.js",
-          "http://mrdoob.github.io/three.js/examples/js/loaders/ColladaLoader.js",
-          "https://raw.githubusercontent.com/mrdoob/three.js/master/examples/js/effects/VREffect.js",
-          "https://raw.githubusercontent.com/mrdoob/three.js/master/examples/js/controls/VRControls.js"
-        ],
-        dest: 'vendor/three/'
       }
     },
 

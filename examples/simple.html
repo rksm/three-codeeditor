@@ -8,34 +8,34 @@
 
   </head>
   <body style="margin:0;">
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.js"></script>
-<script src="http://lively-web.org/users/robertkrahn/just-the-core/html-console.js"></script>
+
+    <!--<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.js"></script>-->
+    <!--<script src="http://lively-web.org/users/robertkrahn/just-the-core/html-console.js"></script>-->
 
     <script type="text/javascript" src="../vendor/three/three.js"></script>
-    <script type="text/javascript" src="three/OrbitControls.js"></script>
-    <script type="text/javascript" src="three/VRControls.js"></script>
-    <script type="text/javascript" src="three/VREffect.js"></script>
-    <script type="text/javascript" src="three/ColladaLoader.js"></script>
-    <script type="text/javascript" src="three/TransformControls.js"></script>
+    <script type="text/javascript" src="js/three/OrbitControls.js"></script>
+    <script type="text/javascript" src="js/three/VRControls.js"></script>
+    <script type="text/javascript" src="js/three/VREffect.js"></script>
+    <script type="text/javascript" src="js/three/ColladaLoader.js"></script>
+    <script type="text/javascript" src="js/three/TransformControls.js"></script>
     <script type="text/javascript" src="../vendor/three/threex.domevents.js"></script>
 
-<script type="text/javascript" src="http://jeromeetienne.github.io/threex.videotexture/threex.videotexture.js"></script>
-<script type="text/javascript" src="http://jeromeetienne.github.io/threex.videotexture/threex.webcamtexture.js"></script>
-
-<script type="text/javascript" src="../../js-compiled/three/tquery.js"></script>
-<script type="text/javascript" src="../../expt/tquery-interface.js"></script>
-
-<script type="text/javascript" src="../../js-compiled/three/dat.gui.js"></script>
-
-<script type="text/javascript" src="../../js-compiled/state-machine.js"></script>
-<script type="text/javascript" src="../../js-compiled/browser-helper/mousetrap.js"></script>
+    <script type="text/javascript" src="http://jeromeetienne.github.io/threex.videotexture/threex.videotexture.js"></script>
+    <script type="text/javascript" src="http://jeromeetienne.github.io/threex.videotexture/threex.webcamtexture.js"></script>
+    
+    <script type="text/javascript" src="js/three/tquery.js"></script>
+    <script type="text/javascript" src="js/three/tquery-interface.js"></script>
+    
+    <script type="text/javascript" src="js/dat.gui.js"></script>
+    
+    <script type="text/javascript" src="js/mousetrap.js"></script>
 
     <script type="text/javascript" src="../vendor/ace/src-noconflict/ace.js"></script>
     <script type="text/javascript" src="../vendor/ace/src-noconflict/ext-language_tools.js"></script>
     <script type="text/javascript" src="../vendor/ace/src-noconflict/keybinding-emacs.js"></script>
 
     <!--<script type="text/javascript" src="../node_modules/lively.lang/lively.lang.dev.js"></script>-->
-    <script type="text/javascript" src="../../../../lively.vm/lively.vm.dev.js"></script>
+    <script type="text/javascript" src="../../../lively.vm/lively.vm.dev.js"></script>
     <script type="text/javascript" src="../lib/helper.js"></script>
     <script type="text/javascript" src="../index.js"></script>
     <script type="text/javascript" src="../lib/commands.js"></script>
@@ -46,15 +46,21 @@
     <script type="text/javascript" src="../lib/mouseevents.js"></script>
     <script type="text/javascript" src="../lib/rendering.js"></script>
     <script type="text/javascript" src="../lib/autocomplete.js"></script>
-    <script type="text/javascript" src="../lib/world.js"></script>
-
+    <script type="text/javascript" src="../../three-world/index.js"></script>
 
     <script type="text/javascript" src="http://lively-web.org/users/robertkrahn/node-lively2lively/lively2lively-browserified.js?name=three-codeeditor-example&baseURL=http://lively-web.org:8080&autoload=true"></script></style>
 
     <script type="text/javascript" >
       var htmlCode = document.documentElement.innerHTML;
       var useVR = !!navigator.mozGetVRDevices || !!navigator.getVRDevices;
-      THREE.CodeEditor.World.create(document.body, {useOrbitControl: true, useVR: useVR}, function(err, world) {
+      THREE.World.create(document.body, {useOrbitControl: true, useVR: useVR}, function(err, world) {
+
+world.renderer.setClearColor(0x333F47, 1);
+
+world.camera.position.set(0,200,320);
+
+        var DOMEvents = THREEx.DomEvents;
+        world.events = new DOMEvents(world.camera, world.renderer.domElement);
         setupTQuery(world);
 
         var codeEditor = new THREE.CodeEditor(world.renderer.domElement, world.events);
@@ -65,10 +71,11 @@
         // codeEditor2.position.set(-400,200,0)
 
         if (world.orbitControl) {
-          world.orbitControl.target = codeEditor.geometry.boundingBox.center().clone();
-          world.orbitControl.panUp(220);
-          world.orbitControl.rotateUp(-.5)
-          world.orbitControl.dollyOut(1.2);
+          // world.orbitControl.target = codeEditor.geometry.boundingBox.center().clone();
+          world.orbitControl.target = codeEditor.position;
+          // world.orbitControl.panUp(220);
+          // world.orbitControl.rotateUp(-.5)
+          // world.orbitControl.dollyOut(1.2);
 
         } else world.camera.lookAt(codeEditor.position);
 
