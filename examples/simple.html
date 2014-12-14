@@ -81,6 +81,7 @@
           enableLiveAutocompletion: false,
           enableSnippets: true
         });
+        THREE.CodeEditor.autocomplete.installDynamicJSCompleterInto(codeEditor.aceEditor);
 
         if (false) {
           codeEditor.aceEditor.setOption("mode", "ace/mode/html");
