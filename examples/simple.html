@@ -62,21 +62,12 @@
         world.startLoop();
         world.renderer.setClearColor(0x333F47, 1);
         world.camera.position.set(0,200,320);
+        world.camera.far = 100000;
+        world.camera.updateProjectionMatrix();
 
         // -=-=-=-=-=-=-=-=-=-=-=-=-=-
         // some geometry to play with
         // -=-=-=-=-=-=-=-=-=-=-=-=-=-
-        var box = new THREE.Mesh(
-          new THREE.BoxGeometry(200, 100, 200, 3,3),
-          new THREE.MeshNormalMaterial({color: 0x00ffff, wireframe: true,side: THREE.DoubleSide}));
-        box.position.set(60,80, -150);
-        world.scene.add(box);
-
-        world.addAnimationCallback("rotate the box", 10/*ms delay*/,function(d) {
-          var rot = Math.PI/(60/d*100);
-          box.rotation.x += rot;
-          box.rotation.y += rot;
-        });
 
         var plane = new THREE.Mesh(
             new THREE.PlaneGeometry(1000,1000, 20,20),
