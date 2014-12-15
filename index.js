@@ -35,29 +35,32 @@
       imports();
 
       this.events = events;
-    
+
+      // supported events: resize
+      lively.lang.events.makeEmitter(this);
+
       var width = 400, height = 400;
       var editorGeo = plane(
         new THREE.Vector3(-width/2, height/2,0),
         new THREE.Vector3( width/2, height/2,0),
         new THREE.Vector3( width/2,-height/2,0),
         new THREE.Vector3(-width/2,-height/2,0));
-    
+
       // building the html canvas that will be used as a texture
       var canvas = this.canvas2d = canvas2d.create(width, height),
           texture	= new THREE.Texture(canvas),
           material= new THREE.MeshBasicMaterial({
             color: "white", map: texture,
             side: THREE.DoubleSide});
-    
+
       // var maxAnisotropy = renderer.getMaxAnisotropy();
     	// texture.anisotropy = 16;
-    
+
       THREE.Mesh.call(this, editorGeo, material);
-    
+
       editorGeo.computeBoundingBox();
       this.position.copy(editorGeo.boundingBox.center());
-    
+
       // creating the ace editor instance that will work behind the scenes as our "model"
       var aceEditor;
       if (optAceEditor) this.aceEditor = aceEditor = optAceEditor
@@ -75,9 +78,9 @@
       aceEditor.renderer.on("autosize",    function() { self.invalidateScrollbar(); });
 
       texture.needsUpdate	= true;
-    
+
       this.addMouseEventListeners();
-    
+
       // command setup
       commands.javascript.forEach(function(cmd) {
         aceEditor.commands.addCommand(cmd); });
@@ -112,7 +115,7 @@
     // -=-=-=-=-=-=-
 
     this.scrollSpeed = 1;
-    
+
     this.addMouseEventListeners = function() {
       mouseevents.patchTHREExDOMEventInstance(this.events);
       if (this._onMouseDown || this._onMouseMove || this._onMouseWheel) this.removeMouseEventListeners();
@@ -221,6 +224,7 @@ return;
       // for events:
       this.geometry.computeBoundingBox();
       this.geometry.computeBoundingSphere();
+      this.emit("resize", {x: width, y: height});
     };
 
     this.getGlobalVertice = function(i) {
@@ -245,7 +249,8 @@ return;
 
       this.position.copy(center);
       this.lookAt(camera.position);
-      
+
+      if (leftRightOrCenter === "center") return;
     // 	var projectionPoint = raycasting.pickingRay({x:-1,y:0}, camera).ray.at(dist);
     // 	var delta = projectionPoint.clone().sub(center);
     //   align(this, this.topLeft(), projectionPoint)
@@ -259,16 +264,61 @@ return;
       camera.updateMatrix()
       camera.updateMatrixWorld()
       var delta = camera.up.clone().cross(this.position.clone().sub(camera.position)).normalize()
+      if (leftRightOrCenter === "right") delta.negate();
       var frustum = new THREE.Frustum();
       frustum.setFromMatrix( new THREE.Matrix4().multiply( camera.projectionMatrix, camera.matrixWorldInverse ) );
       var bounds = new THREE.Box3().setFromObject(this);
       do { // move left unti we "hit" the corner of the editor
         this.position.add(delta);
         this.updateMatrixWorld();
-      } while (frustum.containsPoint(this.topLeft()) && frustum.containsPoint(this.bottomLeft()))
+        var pointsToCheck = leftRightOrCenter === "right" ?
+          [this.topRight(), this.bottomRight()] : [this.topLeft(), this.bottomLeft()]
+      } while (pointsToCheck.every(function(p) { return frustum.containsPoint(p); }));
 
     }
 
+    this.autoAlignWithCamera = function(dir, camera) {
+      var cameraState, editorState, editor = this;;
+
+      this.stopAutoAlignWithCamera();
+
+      rememberState();
+      editor.alignWithCamera(dir, camera);
+
+      editor._autoAlignWithCameraInterval = setInterval(function() {
+        if (!hasCameraChanged() && !hasEditorChanged()) return;
+        rememberState();
+        lively.lang.fun.debounceNamed("autoAlignWithCamera", 200,
+          editor.alignWithCamera.bind(editor, dir, camera))();
+      }, 100);
+
+      function rememberState() {
+        editorState = {wasResized: false, position: editor.position.clone()};
+        editor.once("resize", function() { editorState.wasResized = true; });
+        cameraState = lively.lang.obj.extract(
+          ["position", "rotation", "fov", "aspect", "zoom"], camera,
+          function(k, val) { return val && val.clone ? val.clone() : val; });
+      }
+
+      function hasCameraChanged() {
+        return Object.keys(cameraState).some(function(k) {
+          if (!cameraState[k]) return false;
+          if (cameraState[k].equals) return !cameraState[k].equals(camera[k]);
+          return cameraState[k] !== camera[k];
+        });
+      }
+
+      function hasEditorChanged() {
+        return editorState.wasResized || !editorState.position.equals(editor.position);
+      }
+    };
+
+    this.stopAutoAlignWithCamera = function() {
+      if (this._autoAlignWithCameraInterval) {
+        clearInterval(this._autoAlignWithCameraInterval);
+        delete this._autoAlignWithCameraInterval;
+      }
+    }
   }).call(THREE.CodeEditor.prototype);
 
 
