@@ -59,33 +59,50 @@
       var useVR = !!navigator.mozGetVRDevices || !!navigator.getVRDevices;
       THREE.World.create(document.body, {useOrbitControl: true, useVR: useVR}, function(err, world) {
 
+        world.startLoop();
         world.renderer.setClearColor(0x333F47, 1);
-        
         world.camera.position.set(0,200,320);
 
+        // -=-=-=-=-=-=-=-=-=-=-=-=-=-
+        // some geometry to play with
+        // -=-=-=-=-=-=-=-=-=-=-=-=-=-
+        var box = new THREE.Mesh(
+          new THREE.BoxGeometry(200, 100, 200, 3,3),
+          new THREE.MeshNormalMaterial({color: 0x00ffff, wireframe: true,side: THREE.DoubleSide}));
+        box.position.set(60,80, -150);
+        world.scene.add(box);
+
+        world.addAnimationCallback("rotate the box", 10/*ms delay*/,function(d) {
+          var rot = Math.PI/(60/d*100);
+          box.rotation.x += rot;
+          box.rotation.y += rot;
+        });
+
+        var plane = new THREE.Mesh(
+            new THREE.PlaneGeometry(1000,1000, 20,20),
+            new THREE.MeshBasicMaterial({
+              color: 0x00ffff, wireframe: true,
+              side: THREE.DoubleSide}));
+        plane.position.set(plane.position.x/2, 0, plane.position.z/2);
+        plane.rotation.x = Math.PI/2
+        world.scene.add(plane);
+
+
+        // -=-=-=-=-=-=-=-=-=-
+        // events + controls
+        // -=-=-=-=-=-=-=-=-=-
         var DOMEvents = THREEx.DomEvents;
         world.events = new DOMEvents(world.camera, world.renderer.domElement);
         setupTQuery(world);
+
+        // -=-=-=-=-=-=-=-=-=-
+        // prepare code editor
+        // -=-=-=-=-=-=-=-=-=-
 
         var codeEditor = new THREE.CodeEditor(world.renderer.domElement, world.events);
         world.scene.add(codeEditor);
         codeEditor.position.set(0,200,0)
 
-        // world.scene.add(codeEditor2);
-        // codeEditor2.position.set(-400,200,0)
-
-        if (world.orbitControl) {
-          // world.orbitControl.target = codeEditor.geometry.boundingBox.center().clone();
-          world.orbitControl.target = codeEditor.position.clone();
-          // world.orbitControl.panUp(220);
-          // world.orbitControl.rotateUp(-.5)
-          // world.orbitControl.dollyOut(1.2);
-
-        } else world.camera.lookAt(codeEditor.position);
-
-      // -=-=-=-=-=-=-=-=-=-=-=-=-
-      // prepare editor contents
-      // -=-=-=-=-=-=-=-=-=-=-=-=-
         codeEditor.aceEditor.keyBinding.addKeyboardHandler(ace.require("ace/keyboard/emacs").handler);
         codeEditor.aceEditor.setOptions({
           enableBasicAutocompletion: true,
@@ -102,7 +119,9 @@
           codeEditor.setValue("1 + 2");
         }
 
-        world.startLoop();
+        if (world.orbitControl) {
+          world.orbitControl.target = codeEditor.position.clone();
+        } else world.camera.lookAt(codeEditor.position);
 
         // For debugging
         window.world = world;
