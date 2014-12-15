@@ -8,6 +8,16 @@
 
   </head>
   <body style="margin:0;">
+    <!--ui related-->
+    <script type="text/javascript" src="js/dat.gui.js"></script>
+    <script type="text/javascript" src="js/mousetrap.js"></script>
+
+    <!--ace editor-->
+    <script type="text/javascript" src="../vendor/ace/src-noconflict/ace.js"></script>
+    <script type="text/javascript" src="../vendor/ace/src-noconflict/ext-language_tools.js"></script>
+    <script type="text/javascript" src="../vendor/ace/src-noconflict/keybinding-emacs.js"></script>
+
+    <!--three-->
     <script type="text/javascript" src="../vendor/three/three.js"></script>
     <script type="text/javascript" src="js/three/OrbitControls.js"></script>
     <script type="text/javascript" src="js/three/VRControls.js"></script>
@@ -15,23 +25,20 @@
     <script type="text/javascript" src="js/three/ColladaLoader.js"></script>
     <script type="text/javascript" src="js/three/TransformControls.js"></script>
     <script type="text/javascript" src="../vendor/three/threex.domevents.js"></script>
-
     <script type="text/javascript" src="http://jeromeetienne.github.io/threex.videotexture/threex.videotexture.js"></script>
     <script type="text/javascript" src="http://jeromeetienne.github.io/threex.videotexture/threex.webcamtexture.js"></script>
-    
+
+    <!--tQuery-->
     <script type="text/javascript" src="js/three/tquery.js"></script>
     <script type="text/javascript" src="js/three/tquery-interface.js"></script>
-    
-    <script type="text/javascript" src="js/dat.gui.js"></script>
-    
-    <script type="text/javascript" src="js/mousetrap.js"></script>
 
-    <script type="text/javascript" src="../vendor/ace/src-noconflict/ace.js"></script>
-    <script type="text/javascript" src="../vendor/ace/src-noconflict/ext-language_tools.js"></script>
-    <script type="text/javascript" src="../vendor/ace/src-noconflict/keybinding-emacs.js"></script>
+    <!--THREE-world-->
+    <script type="text/javascript" src="js/three/world.js"></script>
 
-    <!--<script type="text/javascript" src="../node_modules/lively.lang/lively.lang.dev.js"></script>-->
-    <script type="text/javascript" src="../../../lively.vm/lively.vm.dev.js"></script>
+    <!--lively.vm-->
+    <script type="text/javascript" src="js/lively.vm.dev.js"></script>
+
+    <!--codeeditor-3d-->
     <script type="text/javascript" src="../lib/helper.js"></script>
     <script type="text/javascript" src="../index.js"></script>
     <script type="text/javascript" src="../lib/commands.js"></script>
@@ -42,10 +49,11 @@
     <script type="text/javascript" src="../lib/mouseevents.js"></script>
     <script type="text/javascript" src="../lib/rendering.js"></script>
     <script type="text/javascript" src="../lib/autocomplete.js"></script>
-    <script type="text/javascript" src="../../three-world/world.js"></script>
 
-    <script type="text/javascript" src="http://lively-web.org/users/robertkrahn/node-lively2lively/lively2lively-browserified.js?name=three-codeeditor-example&baseURL=http://lively-web.org:8080&autoload=true"></script></style>
+    <!--lively-2-lively-->
+    <script type="text/javascript" src="http://lively-web.org/users/robertkrahn/node-lively2lively/lively2lively-browserified.js?name=three-codeeditor-simple&baseURL=http://lively-web.org:8080&autoload=true"></script></style>
 
+    <!--scene setup-->
     <script type="text/javascript" >
       var htmlCode = document.documentElement.innerHTML;
       var useVR = !!navigator.mozGetVRDevices || !!navigator.getVRDevices;
