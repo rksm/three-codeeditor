@@ -242,7 +242,7 @@ return;
     this.alignWithCamera = function(leftRightOrCenter, camera) {
       // offset: // -1 left, 0 center, 1 right
       this.geometry.computeBoundingBox()
-      var margin = 50;
+      var margin = 200;
       var size = this.geometry.boundingBox.size()
       var dist = (size.y+margin) / 2 / Math.tan(Math.PI * camera.fov / 360);
     	var center = raycasting.pickingRay({x:0,y:0}, camera).ray.at(dist);
