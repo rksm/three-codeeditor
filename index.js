@@ -68,7 +68,7 @@
           canvas3dElement.offsetLeft, canvas3dElement.offsetTop, width, height);
       }
 
-      aceEditor.parent3d = this; // backlink for autocompleter
+      aceEditor.parent3d = this; // FIXME backlink for autocompleter
 
       var self = this;
       aceEditor.renderer.on("afterRender", function() { rendering.onAceEditorAfterRenderEvent(aceEditor, self); });
