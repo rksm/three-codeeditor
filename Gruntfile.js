@@ -57,9 +57,11 @@ module.exports = function(grunt) {
       "codeeditor3d.dev-bundle.js": {
         src: ["vendor/threex.domevents.js",
               "vendor/ace/src-noconflict/ace.js",
+              "vendor/ace/src-noconflict/ext-language_tools.js",
               "vendor/lively.lang.dev.js",
               "index.js",
               "lib/ace-helper.js",
+              "lib/autocomplete.js",
               "lib/canvas2d.js",
               "lib/domevents.js",
               "lib/raycasting.js",
@@ -86,6 +88,6 @@ module.exports = function(grunt) {
   grunt.registerTask('update-ace',         ['curl-dir:update-ace', 'shell:update-ace']);
   grunt.registerTask('update-lively.lang', ['curl-dir:update-lively.lang']);
   grunt.registerTask('updateLibs',         ['update-ace', 'update-lively.lang']);
-  grunt.registerTask('build',              ['concat:codeeditor3d.dev-bundle.js']);
+  grunt.registerTask('build',              ['concat:codeeditor3d.dev-bundle.js', 'uglify:codeeditor3d.min-bundle.js']);
   
 };
