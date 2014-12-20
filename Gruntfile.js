@@ -23,16 +23,16 @@ module.exports = function(grunt) {
     // fetching resources
     // -=-=-=-=-=-=-=-=-=-
     curl: {
-      'update-lively.lang': {
-        src: 'https://raw.githubusercontent.com/LivelyKernel/lively.lang/master/lively.lang.dev.js',
-        dest: 'vendor/lively.lang.dev.js'
-      }
     },
 
     'curl-dir': {
       'update-ace': {
         src: ['https://github.com/ajaxorg/ace-builds/archive/master.tar.gz'],
         dest: 'vendor/ace/'
+      },
+      'update-lively.lang': {
+        src: ['lively.lang.dev.js', 'lively.lang.dev.js.map'].map(function(ea) { return 'https://raw.githubusercontent.com/LivelyKernel/lively.lang/master/' + ea}),
+        dest: 'vendor/'
       }
     },
 
@@ -55,8 +55,9 @@ module.exports = function(grunt) {
     concat: {
       options: {sourceMap: true, sourceMapStyle: 'link', separator: ';\n'},
       "codeeditor3d.dev-bundle.js": {
-        src: ["vendor/ace/src-noconflict/ace.js",
-              "lively.lang.dev.js",
+        src: ["vendor/threex.domevents.js",
+              "vendor/ace/src-noconflict/ace.js",
+              "vendor/lively.lang.dev.js",
               "index.js",
               "lib/ace-helper.js",
               "lib/canvas2d.js",
@@ -81,10 +82,10 @@ module.exports = function(grunt) {
 
   });
 
-  grunt.registerTask('test', ['jshint', 'shell:runTests']);
-  grunt.registerTask('update-ace', ['curl-dir:update-ace', 'shell:update-ace']);
-  grunt.registerTask('update-lively.lang', ['curl:update-lively.lang']);
-  grunt.registerTask('updateLibs', ['update-ace', 'update-lively.lang']);
-  grunt.registerTask('build', ['concat:codeeditor3d.dev-bundle.js']);
+  grunt.registerTask('test',               ['jshint', 'shell:runTests']);
+  grunt.registerTask('update-ace',         ['curl-dir:update-ace', 'shell:update-ace']);
+  grunt.registerTask('update-lively.lang', ['curl-dir:update-lively.lang']);
+  grunt.registerTask('updateLibs',         ['update-ace', 'update-lively.lang']);
+  grunt.registerTask('build',              ['concat:codeeditor3d.dev-bundle.js']);
   
 };
