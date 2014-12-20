@@ -30,10 +30,13 @@
     // initialize-release
     // -=-=-=-=-=-=-=-=-=-
 
-    this.initialize = function(canvas3dElement, events, optAceEditor) {
+    this.initialize = function(options) {
       imports();
 
-      this.events = events;
+      if (!options) throw new Error("No settings specified for CodeEditor3D!");
+      if (!options.events) throw new Error("Settings do not specify a THREEx.DomEvents instance!");
+
+      this.events = options.events;
 
       // supported events: resize
       lively.lang.events.makeEmitter(this);
@@ -62,10 +65,11 @@
 
       // creating the ace editor instance that will work behind the scenes as our "model"
       var aceEditor;
-      if (optAceEditor) this.aceEditor = aceEditor = optAceEditor
+      if (options.aceEditor) this.aceEditor = aceEditor = options.aceEditor;
       else {
+        var offset = options.canvasOffset || {left: 0, top: 0};
         aceEditor = this.aceEditor = aceHelper.createAceEditor(
-          canvas3dElement.offsetLeft, canvas3dElement.offsetTop, width, height);
+          offset.left, offset.top, width, height);
       }
 
       aceEditor.parent3d = this; // FIXME backlink for autocompleter
