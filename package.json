@@ -1,6 +1,6 @@
 {
   "name": "three-codeeditor",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "codeeditor for three.js",
   "main": "index.js",
   "directories": {
@@ -17,10 +17,8 @@
     "grunt-shell": "^1.1.1",
     "imagediff": "^1.0.7",
     "lively.lang": "^0.3.3",
-    "lively.vm": "*",
     "load-grunt-tasks": "^1.0.0",
-    "mocha": "*",
-    "mocha-phantomjs": "*"
+    "mocha": "*"
   },
   "scripts": {
     "test": "open tests/run-tests.html"
