@@ -22,15 +22,22 @@ module.exports = function(grunt) {
     // -=-=-=-=-=-=-=-=-=-
     // fetching resources
     // -=-=-=-=-=-=-=-=-=-
+    curl: {
+      'update-lively.lang': {
+        src: 'https://raw.githubusercontent.com/LivelyKernel/lively.lang/master/lively.lang.dev.js',
+        dest: 'vendor/lively.lang.dev.js'
+      }
+    },
+
     'curl-dir': {
-      'updateAce': {
+      'update-ace': {
         src: ['https://github.com/ajaxorg/ace-builds/archive/master.tar.gz'],
         dest: 'vendor/ace/'
       }
     },
 
     shell: {
-      updateAce: {
+      'update-ace': {
         command: 'rm -rf src{,-min}-noconflict; '
                + 'tar -xf master.tar.gz; mv ace-builds-master/src{,-min}-noconflict .; '
                + 'rm -rf ace-builds-master master.tar.gz',
@@ -49,6 +56,7 @@ module.exports = function(grunt) {
       options: {sourceMap: true, sourceMapStyle: 'link', separator: ';\n'},
       "codeeditor3d.dev-bundle.js": {
         src: ["vendor/ace/src-noconflict/ace.js",
+              "lively.lang.dev.js",
               "index.js",
               "lib/ace-helper.js",
               "lib/canvas2d.js",
@@ -74,8 +82,9 @@ module.exports = function(grunt) {
   });
 
   grunt.registerTask('test', ['jshint', 'shell:runTests']);
-  grunt.registerTask('updateAce', ['curl-dir:updateAce', 'shell:updateAce']);
-  grunt.registerTask('updateLibs', ['updateAce']);
+  grunt.registerTask('update-ace', ['curl-dir:update-ace', 'shell:update-ace']);
+  grunt.registerTask('update-lively.lang', ['curl:update-lively.lang']);
+  grunt.registerTask('updateLibs', ['update-ace', 'update-lively.lang']);
   grunt.registerTask('build', ['concat:codeeditor3d.dev-bundle.js']);
   
 };
