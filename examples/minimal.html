@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Simple THREE codeeditor setup</title>
+    <meta http-equiv="cache-control" content="no-cache" />
+    <meta http-equiv="pragma" content="no-cache" />
+
+  </head>
+  <body style="margin:0;">
+    <!--utilities-->
+    <script type="text/javascript" src="../node_modules/lively.lang/lively.lang.dev.js"></script>
+
+    <!--three-->
+    <script type="text/javascript" src="../vendor/three/three.js"></script>
+    <script type="text/javascript" src="../vendor/three/threex.domevents.js"></script>
+
+    <!--codeeditor-3d-->
+    <script type="text/javascript" src="../vendor/ace/src-noconflict/ace.js"></script>
+    <script type="text/javascript" src="../index.js"></script>
+    <script type="text/javascript" src="../lib/ace-helper.js"></script>
+    <script type="text/javascript" src="../lib/canvas2d.js"></script>
+    <script type="text/javascript" src="../lib/domevents.js"></script>
+    <script type="text/javascript" src="../lib/raycasting.js"></script>
+    <script type="text/javascript" src="../lib/mouseevents.js"></script>
+    <script type="text/javascript" src="../lib/rendering.js"></script>
+    <!--<script type="text/javascript" src="../lib/autocomplete.js"></script>-->
+
+    <!--<script type="text/javascript" src="../codeeditor3d.dev-bundle.js"></script>-->
+
+    <!--lively-2-lively-->
+    <script type="text/javascript" src="http://lively-web.org/users/robertkrahn/node-lively2lively/lively2lively-browserified.js?name=three-codeeditor-simple&baseURL=http://lively-web.org:8080&autoload=true"></script></style>
+
+    <!--scene setup-->
+    <script type="text/javascript" >
+      // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+      // THREE boilerplate: create a scene
+      var domElement = document.body;
+      var width = window.innerWidth, height = window.innerHeight;
+      
+      var scene = new THREE.Scene();
+      
+      var camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
+      camera.aspect = width/height;
+      camera.updateProjectionMatrix();
+      scene.add(camera);
+      
+      var renderer = new THREE.WebGLRenderer({antialias:true});
+      domElement.appendChild(renderer.domElement);
+      renderer.setSize(width, height);
+      
+      (function loop() {
+        requestAnimationFrame(loop);
+        renderer.render(scene, camera);
+      })();
+
+      // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+      // setup the editor
+      var events = new THREEx.DomEvents(camera, renderer.domElement);
+      var codeEditor = new THREE.CodeEditor(renderer.domElement, events);
+      scene.add(codeEditor);
+      codeEditor.alignWithCamera("center", camera);
+      codeEditor.setValue("Hello World :)");
+    </script>
+
+  </body>
+</html>
+
