@@ -54,7 +54,7 @@ module.exports = function(grunt) {
     // -=-=-=-=-=-=-=-
     concat: {
       options: {sourceMap: true, sourceMapStyle: 'link', separator: ';\n'},
-      "codeeditor3d.dev-bundle.js": {
+      "codeeditor3d.dev.js": {
         src: ["vendor/threex.domevents.js",
               "vendor/ace/src-noconflict/ace.js",
               "vendor/ace/src-noconflict/ext-language_tools.js",
@@ -68,18 +68,18 @@ module.exports = function(grunt) {
               "lib/raycasting.js",
               "lib/mouseevents.js",
               "lib/rendering.js"],
-        dest: "codeeditor3d.dev-bundle.js"
+        dest: "codeeditor3d.dev.js"
       }
     },
 
     uglify: {
-      "codeeditor3d.min-bundle.js": {
+      "codeeditor3d.min.js": {
         options: {
           sourceMap: true,
           banner: '/*! <%= pkg.name %>-v<%= pkg.version %> '
                 + '<%= grunt.template.today("yyyy-mm-dd") %> */\n'
         },
-        files: {"codeeditor3d.min-bundle.js": "codeeditor3d.dev-bundle.js"}
+        files: {"codeeditor3d.min.js": "codeeditor3d.dev.js"}
       }
     }
 
@@ -89,6 +89,6 @@ module.exports = function(grunt) {
   grunt.registerTask('update-ace',         ['curl-dir:update-ace', 'shell:update-ace']);
   grunt.registerTask('update-lively.lang', ['curl-dir:update-lively.lang']);
   grunt.registerTask('updateLibs',         ['update-ace', 'update-lively.lang']);
-  grunt.registerTask('build',              ['concat:codeeditor3d.dev-bundle.js', 'uglify:codeeditor3d.min-bundle.js']);
+  grunt.registerTask('build',              ['concat:codeeditor3d.dev.js', 'uglify:codeeditor3d.min.js']);
   
 };
