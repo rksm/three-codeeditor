@@ -12,7 +12,6 @@
     canvas2d            = THREE.CodeEditor.canvas2d,
     mouseevents         = THREE.CodeEditor.mouseevents;
     domevents           = THREE.CodeEditor.domevents;
-    commands            = THREE.CodeEditor.commands;
     raycasting          = THREE.CodeEditor.raycasting;
   }
 
@@ -80,13 +79,6 @@
       texture.needsUpdate	= true;
 
       this.addMouseEventListeners();
-
-      // command setup
-      commands.javascript.forEach(function(cmd) {
-        aceEditor.commands.addCommand(cmd); });
-      var occurStartCommand = ace.require("ace/commands/occur_commands").occurStartCommand;
-      aceEditor.commands.addCommand(occurStartCommand);
-      aceEditor.setOption("useIncrementalSearch", true);
     }
 
     this.destroy = function() {
