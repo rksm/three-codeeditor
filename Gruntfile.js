@@ -62,6 +62,7 @@ module.exports = function(grunt) {
               "index.js",
               "lib/ace-helper.js",
               "lib/autocomplete.js",
+              "lib/commands.js",
               "lib/canvas2d.js",
               "lib/domevents.js",
               "lib/raycasting.js",

@@ -358,7 +358,7 @@ THREEx.DomEvents.prototype._notify	= function(eventName, object3d, origDomEvent,
 /********************************************************************************/
 // # handle mouse events
 
-THREEx.DomEvents.prototype._onMouseDown	= function(event){ console.log("x down"); return this._onMouseEvent('mousedown', event);	}
+THREEx.DomEvents.prototype._onMouseDown	= function(event){ return this._onMouseEvent('mousedown', event);	}
 THREEx.DomEvents.prototype._onMouseUp	= function(event){ return this._onMouseEvent('mouseup'	, event);	}
 THREEx.DomEvents.prototype._onMouseWheel	= function(event){ return this._onMouseEvent('mousewheel'	, event);	}
 
