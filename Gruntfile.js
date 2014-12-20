@@ -55,8 +55,7 @@ module.exports = function(grunt) {
               "lib/domevents.js",
               "lib/raycasting.js",
               "lib/mouseevents.js",
-              "lib/rendering.js",
-              "lib/autocomplete.js"],
+              "lib/rendering.js"],
         dest: "codeeditor3d.dev-bundle.js"
       }
     },
