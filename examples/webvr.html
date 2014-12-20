@@ -14,12 +14,12 @@
       // THREE boilerplate: create a scene
       var domElement = document.body;
       var width = window.innerWidth, height = window.innerHeight;
-      
+
       var scene = new THREE.Scene();
-      
+
       var camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
       scene.add(camera);
-      
+
       var renderer = new THREE.WebGLRenderer({antialias:true});
       domElement.appendChild(renderer.domElement);
 
@@ -36,12 +36,20 @@
 
       // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
       // setup the editor
-      var events = new THREEx.DomEvents(camera, renderer.domElement);
-      var codeEditor = new THREE.CodeEditor(renderer.domElement, events);
+      var codeEditor = new THREE.CodeEditor({
+        events: new THREEx.DomEvents(camera, renderer.domElement),
+        vr: {effect: vrEffect, control: vrControl}
+      });
       scene.add(codeEditor);
       codeEditor.autoAlignWithCamera('center', camera)
       codeEditor.aceEditor.setFontSize(20);
       codeEditor.setValue("Press alt+f to enter fullscreen.");
+
+      window.addEventListener("keypress", function(evt) {
+        if (evt.altKey && evt.charCode == "402") { // alt-f
+          vrEffect.startFullscreen();
+        }
+      });
 
       // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
       // helper

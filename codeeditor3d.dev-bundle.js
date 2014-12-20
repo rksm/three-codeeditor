@@ -27183,6 +27183,7 @@ var worker = exports.worker = {
       if (!options) throw new Error("No settings specified for CodeEditor3D!");
       if (!options.events) throw new Error("Settings do not specify a THREEx.DomEvents instance!");
 
+      this.vr = options.vr;
       this.events = options.events;
 
       // supported events: resize
@@ -27260,7 +27261,7 @@ var worker = exports.worker = {
     this.scrollSpeed = 1;
 
     this.addMouseEventListeners = function() {
-      mouseevents.patchTHREExDOMEventInstance(this.events);
+      mouseevents.patchTHREExDOMEventInstance(this);
       if (this._onMouseDown || this._onMouseMove || this._onMouseWheel) this.removeMouseEventListeners();
 
       this._onMouseDown  = function(evt) { return this.onMouseDown(evt); }.bind(this);
@@ -27921,15 +27922,28 @@ return;
 
   exports.retargetDOMEvent = retargetDOMEvent;
   exports.isFullscreen;
+  exports.fullscreenElement;
+  exports.cancelFullscreen;
 
   // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
   var isFirefox = !!navigator.userAgent.match(/Firefox\//);
 
   exports.isFullscreen = function isFullscreen() {
-    return !!document.fullScreenElement
-        || !!document.webkitFullScreenElement
-        || !!document.mozFullScreenElement;
+    return !!exports.fullscreenElement();
+  }
+
+  exports.fullscreenElement = function fullscreenElement() {
+    return document.fullScreenElement
+        || document.webkitFullScreenElement
+        || document.mozFullScreenElement;
+  };
+
+  exports.cancelFullscreen = function cancelFullscreen() {
+    var method = lively.lang.arr.detect(
+      ["cancelFullScreen","mozCancelFullScreen","webkitCancelFullScreen"],
+      function(m) { return document[m]; });
+    document[method]();
   };
 
   function retargetDOMEvent(evt, newTargetPos, newTargetEl) {
@@ -28053,9 +28067,6 @@ return;
 
 
   function convertXYToOcculusCoords(coords) {
-    // FIXME!! Hack...
-    if (!window.world || !window.world.vr || !window.world.vr.control) return coords;
-
     var x = coords.x, y = coords.y;
 
     var domainXMin = x < 0 ? -1 : 0, domainXMax = x < 0 ? 0 : 1;
@@ -28076,25 +28087,24 @@ return;
     };
   }
 
-  // convertXYToOcculusCoords({x: -0.2, y: 0})
-
-  function getRelativeMouseXY(x, y, domElement) {
+  function getRelativeMouseXY(x, y, domElement, mapForVR) {
     // Converts the browser global (page) x/y coordinates
     // into relative -1/1 values. These can be used by THREE for raycasting.
 
-		var rect = domElement.getBoundingClientRect(),
-    		relX = (x - rect.left) / rect.width,
-    		relY = (y - rect.top) / rect.height;
+		var rect   = domElement.getBoundingClientRect(),
+    		relX   = (x - rect.left) / rect.width,
+    		relY   = (y - rect.top) / rect.height,
+    		coords = {
+      		x : (relX * 2) - 1,
+      		y : -(relY * 2) + 1,
+      		z: 0.5
+      	};
 
-  	return convertXYToOcculusCoords({
-  		x : (relX * 2) - 1,
-  		y : -(relY * 2) + 1,
-  		z: 0.5
-  	});
+  	return mapForVR ? convertXYToOcculusCoords(coords) : coords;
   }
 
-  function getRelativeMouseXYFromEvent(domEvent) {
-    return getRelativeMouseXY(domEvent.pageX, domEvent.pageY, domEvent.target || domEvent.srcElement);
+  function getRelativeMouseXYFromEvent(domEvent, mapForVR) {
+    return getRelativeMouseXY(domEvent.pageX, domEvent.pageY, domEvent.target || domEvent.srcElement, mapForVR);
   }
 
   // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
@@ -28115,8 +28125,8 @@ return;
     return raycaster;
   }
 
-  function domEventRaycast(domEvent, camera) {
-    var mouseCoords = getRelativeMouseXYFromEvent(domEvent),
+  function domEventRaycast(domEvent, camera, mapForVR) {
+    var mouseCoords = getRelativeMouseXYFromEvent(domEvent, mapForVR),
       	vector	    = new THREE.Vector3(mouseCoords.x, mouseCoords.y, 0.5);
     return pickingRay(vector, camera);
   }
@@ -28126,8 +28136,8 @@ return;
   // mapping of scene positions
   // -=-=-=-=-=-=-=-=-=-=-=-=-=-
 
-  function pickObjFromDOMEvent(evt, camera, objsToPick) {
-    var intersects = domEventRaycast(evt,camera).intersectObjects(objsToPick);
+  function pickObjFromDOMEvent(evt, camera, objsToPick,mapForVR) {
+    var intersects = domEventRaycast(evt,camera,mapForVR).intersectObjects(objsToPick);
   	return intersects[0];
   }
 
@@ -28159,7 +28169,7 @@ return;
     return cache[mesh3D.uuid] = browserLocalTopLeft;
   }
 
-  function convertEventPos3DtoHTML(domEvent, camera, oldEventTargetEl, newEventTargetEl, sceneObject, offset) {
+  function convertEventPos3DtoHTML(domEvent, camera, oldEventTargetEl, newEventTargetEl, sceneObject, offset, mapForVR) {
     // DOM evt on 3D scene -> 2D position onto dom element acting as a hypothetical target.
     // Note that `oldEventTargetEl` can be choosen by the caller, it does not
     // neet to be the actual domEvent.target. We use it when getting e.g. scroll
@@ -28179,7 +28189,8 @@ return;
           retargetDOMEvent(domEvent,
           {x: domEvent.pageX+offsetX, y: domEvent.pageY+offsetY},
           oldEventTargetEl),
-          camera, [sceneObject]);
+          camera, [sceneObject],
+          mapForVR);
     return raycastIntersectionToDomXY(intersection, newEventTargetEl);
   }
 
@@ -28194,10 +28205,10 @@ return;
 
   var retargetDOMEvent = THREE.CodeEditor.domevents.retargetDOMEvent;
 
-  var pickingRay                  = THREE.CodeEditor.raycasting.pickingRay;
-  var convertToBrowserCoords      = THREE.CodeEditor.raycasting.convertToBrowserCoords;
-  var convertEventPos3DtoHTML     = THREE.CodeEditor.raycasting.convertEventPos3DtoHTML;
-  var getRelativeMouseXYFromEvent = THREE.CodeEditor.raycasting.getRelativeMouseXYFromEvent;
+  var pickingRay                    = THREE.CodeEditor.raycasting.pickingRay;
+  var convertToBrowserCoords        = THREE.CodeEditor.raycasting.convertToBrowserCoords;
+  var convertEventPos3DtoHTML       = THREE.CodeEditor.raycasting.convertEventPos3DtoHTML;
+  var getRelativeMouseXYFromEvent   = THREE.CodeEditor.raycasting.getRelativeMouseXYFromEvent;
 
   var isFirefox = !!navigator.userAgent.match(/Firefox\//);
 
@@ -28223,10 +28234,12 @@ return;
           function(evt3D) { var evt = evt3D.origDomEvent; return evt.which === 3 || evt.buttons === 2 }
   })();
 
-  function patchTHREExDOMEventInstance(domEvents) {
+  function patchTHREExDOMEventInstance(codeEditor) {
     // see https://github.com/mrdoob/three.js/issues/5587
-    domEvents._projector.pickingRay = pickingRay;
-    THREEx.DomEvents.prototype._getRelativeMouseXY	= getRelativeMouseXYFromEvent;
+    codeEditor.events._projector.pickingRay = pickingRay;
+    THREEx.DomEvents.prototype._getRelativeMouseXY = codeEditor.vr ?
+      function(evt) { return getRelativeMouseXYFromEvent(evt, true); } :
+      getRelativeMouseXYFromEvent;
   }
 
   function processScrollbarMouseEvent(THREExDOMEvents, codeEditor, clickState, evt3D) {
@@ -28316,13 +28329,13 @@ return;
     // we patch methods so that we can install method patchers... uuuuha
     aceEd.$mouseHandler.captureMouse = chain(aceEd.$mouseHandler.captureMouse)
       .getOriginal().wrap(function(proceed, evt, mouseMoveHandler) {
-        evt.domEvent = retargetDOMEvent(evt.domEvent, convertEventPos3DtoHTML(evt, THREExDOMEvents._camera, THREExDOMEvents._domElement, aceEdEl, codeEditor, {x:0,y:aceEd.renderer.layerConfig.offset}), aceEdEl);
+        evt.domEvent = retargetDOMEvent(evt.domEvent, convertEventPos3DtoHTML(evt, THREExDOMEvents._camera, THREExDOMEvents._domElement, aceEdEl, codeEditor, {x:0,y:aceEd.renderer.layerConfig.offset}, !!codeEditor.vr), aceEdEl);
 
         mouseMoveHandler = mouseMoveHandler && chain(mouseMoveHandler)
           .getOriginal()
           .wrap(function(proceed, evt) {
             return evt && proceed(
-              retargetDOMEvent(evt, convertEventPos3DtoHTML(evt, THREExDOMEvents._camera, THREExDOMEvents._domElement, aceEdEl, codeEditor, {x:0,y:aceEd.renderer.layerConfig.offset}), aceEdEl));
+              retargetDOMEvent(evt, convertEventPos3DtoHTML(evt, THREExDOMEvents._camera, THREExDOMEvents._domElement, aceEdEl, codeEditor, {x:0,y:aceEd.renderer.layerConfig.offset}, !!codeEditor.vr), aceEdEl));
           }).value();
         return proceed(evt, mouseMoveHandler);
       }).value();
@@ -28334,14 +28347,14 @@ return;
           .getOriginal()
           .wrap(function(proceed, evt) {
             return evt && proceed(
-              retargetDOMEvent(evt, convertEventPos3DtoHTML(evt, THREExDOMEvents._camera, THREExDOMEvents._domElement, aceEdEl, codeEditor, {x:0,y:aceEd.renderer.layerConfig.offset}), aceEdEl));
+              retargetDOMEvent(evt, convertEventPos3DtoHTML(evt, THREExDOMEvents._camera, THREExDOMEvents._domElement, aceEdEl, codeEditor, {x:0,y:aceEd.renderer.layerConfig.offset}, !!codeEditor.vr), aceEdEl));
           }).value();
 
         releaseCaptureHandler = chain(releaseCaptureHandler)
           .getOriginal()
           .wrap(function(proceed, evt) {
             return evt && proceed(
-              retargetDOMEvent(evt, convertEventPos3DtoHTML(evt, THREExDOMEvents._camera, THREExDOMEvents._domElement, aceEdEl, codeEditor, {x:0,y:aceEd.renderer.layerConfig.offset}), aceEdEl));
+              retargetDOMEvent(evt, convertEventPos3DtoHTML(evt, THREExDOMEvents._camera, THREExDOMEvents._domElement, aceEdEl, codeEditor, {x:0,y:aceEd.renderer.layerConfig.offset}, !!codeEditor.vr), aceEdEl));
           }).value();
 
         return proceed(el, eventHandler, releaseCaptureHandler);

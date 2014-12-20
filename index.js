@@ -36,6 +36,7 @@
       if (!options) throw new Error("No settings specified for CodeEditor3D!");
       if (!options.events) throw new Error("Settings do not specify a THREEx.DomEvents instance!");
 
+      this.vr = options.vr;
       this.events = options.events;
 
       // supported events: resize
@@ -113,7 +114,7 @@
     this.scrollSpeed = 1;
 
     this.addMouseEventListeners = function() {
-      mouseevents.patchTHREExDOMEventInstance(this.events);
+      mouseevents.patchTHREExDOMEventInstance(this);
       if (this._onMouseDown || this._onMouseMove || this._onMouseWheel) this.removeMouseEventListeners();
 
       this._onMouseDown  = function(evt) { return this.onMouseDown(evt); }.bind(this);
