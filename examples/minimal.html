@@ -5,7 +5,7 @@
   </head>
   <body style="margin:0;">
     <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/three.js/r69/three.js"></script>
-    <script type="text/javascript" src="../codeeditor3d.dev-bundle.js"></script>
+    <script type="text/javascript" src="../codeeditor3d.dev.js"></script>
     <script type="text/javascript" >
       // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
       // THREE boilerplate: create a scene
@@ -30,7 +30,8 @@
       // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
       // setup the editor
       var codeEditor = new THREE.CodeEditor({
-        events: new THREEx.DomEvents(camera, renderer.domElement)
+        domElement: renderer.domElement,
+        camera: camera
       });
       scene.add(codeEditor);
       codeEditor.alignWithCamera("center", camera);

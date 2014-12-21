@@ -34,10 +34,12 @@
       imports();
 
       if (!options) throw new Error("No settings specified for CodeEditor3D!");
-      if (!options.events) throw new Error("Settings do not specify a THREEx.DomEvents instance!");
+      if (!options.events && (!options.domElement || !options.domElement)) {
+        new Error("Settings do not specify an event interface nor a domElement / camera that is needed to set events up!")
+      }
 
       this.vr = options.vr;
-      this.events = options.events;
+      this.events = options.events || new THREEx.DomEvents(options.camera, options.domElement);
 
       // supported events: resize
       lively.lang.events.makeEmitter(this);

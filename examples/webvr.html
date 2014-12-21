@@ -36,7 +36,8 @@
       // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
       // setup the editor
       var codeEditor = new THREE.CodeEditor({
-        events: new THREEx.DomEvents(camera, renderer.domElement),
+        domElement: renderer.domElement,
+        camera: camera,
         vr: {effect: vrEffect, control: vrControl}
       });
       scene.add(codeEditor);
