@@ -22,9 +22,6 @@ module.exports = function(grunt) {
     // -=-=-=-=-=-=-=-=-=-
     // fetching resources
     // -=-=-=-=-=-=-=-=-=-
-    curl: {
-    },
-
     'curl-dir': {
       'update-ace': {
         src: ['https://github.com/ajaxorg/ace-builds/archive/master.tar.gz'],
@@ -37,9 +34,12 @@ module.exports = function(grunt) {
     },
 
     shell: {
+      'ace-clean': {
+        command: 'rm -rf *; ',
+        options: {execOptions: {cwd: 'vendor/ace/'}}
+      },
       'update-ace': {
-        command: 'rm -rf src{,-min}-noconflict; '
-               + 'tar -xf master.tar.gz; mv ace-builds-master/src{,-min}-noconflict .; '
+        command: 'tar -xf master.tar.gz; mv ace-builds-master/src-noconflict/* .; '
                + 'rm -rf ace-builds-master master.tar.gz',
         options: {execOptions: {cwd: 'vendor/ace/'}}
       },
@@ -56,8 +56,8 @@ module.exports = function(grunt) {
       options: {sourceMap: true, sourceMapStyle: 'link', separator: ';\n'},
       "codeeditor3d.dev.js": {
         src: ["vendor/threex.domevents.js",
-              "vendor/ace/src-noconflict/ace.js",
-              "vendor/ace/src-noconflict/ext-language_tools.js",
+              "vendor/ace/ace.js",
+              "vendor/ace/ext-language_tools.js",
               "vendor/lively.lang.dev.js",
               "index.js",
               "lib/ace-helper.js",
@@ -76,6 +76,10 @@ module.exports = function(grunt) {
       "codeeditor3d.min.js": {
         options: {
           sourceMap: true,
+          preserveComments: (function() {
+            var matcher = /BEGIN LICENSE BLOCK|Copyright/i;
+            return function(node, comment) { return matcher.test(comment.value); }
+          })(),
           banner: '/*! <%= pkg.name %>-v<%= pkg.version %> '
                 + '<%= grunt.template.today("yyyy-mm-dd") %> */\n'
         },
@@ -86,7 +90,7 @@ module.exports = function(grunt) {
   });
 
   grunt.registerTask('test',               ['jshint', 'shell:runTests']);
-  grunt.registerTask('update-ace',         ['curl-dir:update-ace', 'shell:update-ace']);
+  grunt.registerTask('update-ace',         ['shell:ace-clean', 'curl-dir:update-ace', 'shell:update-ace']);
   grunt.registerTask('update-lively.lang', ['curl-dir:update-lively.lang']);
   grunt.registerTask('updateLibs',         ['update-ace', 'update-lively.lang']);
   grunt.registerTask('build',              ['concat:codeeditor3d.dev.js', 'uglify:codeeditor3d.min.js']);
