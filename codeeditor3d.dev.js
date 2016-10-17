@@ -28288,33 +28288,35 @@ return;
         y = newTargetPos.y,
         fakeEvt = Object.create(evt)
 
-    if (isFirefox) { // Firefox throws errors when we try to access the inherited attributes...
-      // https://developer.mozilla.org/en-US/docs/Web/API/UIEvent
-      Object.defineProperty(fakeEvt, "detail",        {value: evt.detail});
-      Object.defineProperty(fakeEvt, "view",          {value: evt.view});
-      // https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent
-      Object.defineProperty(fakeEvt, "altKey",        {value: evt.altKey});
-      Object.defineProperty(fakeEvt, "button",        {value: evt.button});
-      Object.defineProperty(fakeEvt, "buttons",       {value: evt.buttons});
-      // Object.defineProperty(fakeEvt, "clientX",       {value: evt.clientX});
-      // Object.defineProperty(fakeEvt, "clientY",       {value: evt.clientY});
-      Object.defineProperty(fakeEvt, "ctrlKey",       {value: evt.ctrlKey});
-      Object.defineProperty(fakeEvt, "metaKey",       {value: evt.metaKey});
-      Object.defineProperty(fakeEvt, "movementX",     {value: evt.movementX});
-      Object.defineProperty(fakeEvt, "movementY",     {value: evt.movementY});
-      Object.defineProperty(fakeEvt, "mozMovementX",     {value: evt.mozMovementX});
-      Object.defineProperty(fakeEvt, "mozMovementY",     {value: evt.mozMovementY});
-      Object.defineProperty(fakeEvt, "relatedTarget", {value: evt.relatedTarget});
-      Object.defineProperty(fakeEvt, "screenX",       {value: evt.screenX});
-      Object.defineProperty(fakeEvt, "screenY",       {value: evt.screenY});
-      Object.defineProperty(fakeEvt, "shiftKey",      {value: evt.shiftKey});
-      Object.defineProperty(fakeEvt, "which",         {value: evt.which});
+	  // Firefox (and as of 2016-10-17 also Chrome) throw errors when we
+		// try to access the inherited attributes...
+		// ...so redefine property accessors needed	
+    // https://developer.mozilla.org/en-US/docs/Web/API/UIEvent
+    Object.defineProperty(fakeEvt, "detail",        {value: evt.detail});
+    Object.defineProperty(fakeEvt, "view",          {value: evt.view});
+    // https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent
+    Object.defineProperty(fakeEvt, "altKey",        {value: evt.altKey});
+    Object.defineProperty(fakeEvt, "button",        {value: evt.button});
+    Object.defineProperty(fakeEvt, "buttons",       {value: evt.buttons});
+    // Object.defineProperty(fakeEvt, "clientX",       {value: evt.clientX});
+    // Object.defineProperty(fakeEvt, "clientY",       {value: evt.clientY});
+    Object.defineProperty(fakeEvt, "ctrlKey",       {value: evt.ctrlKey});
+    Object.defineProperty(fakeEvt, "metaKey",       {value: evt.metaKey});
+    Object.defineProperty(fakeEvt, "movementX",     {value: evt.movementX});
+    Object.defineProperty(fakeEvt, "movementY",     {value: evt.movementY});
+    Object.defineProperty(fakeEvt, "mozMovementX",     {value: evt.mozMovementX});
+    Object.defineProperty(fakeEvt, "mozMovementY",     {value: evt.mozMovementY});
+    Object.defineProperty(fakeEvt, "relatedTarget", {value: evt.relatedTarget});
+    Object.defineProperty(fakeEvt, "screenX",       {value: evt.screenX});
+    Object.defineProperty(fakeEvt, "screenY",       {value: evt.screenY});
+    Object.defineProperty(fakeEvt, "shiftKey",      {value: evt.shiftKey});
+    Object.defineProperty(fakeEvt, "which",         {value: evt.which});
 
-      Object.defineProperty(fakeEvt, "eventPhase",    {value: evt.eventPhase});
-      Object.defineProperty(fakeEvt, "bubbles",       {value: evt.bubbles});
-      Object.defineProperty(fakeEvt, "cancelable",    {value: evt.cancelable});
-      Object.defineProperty(fakeEvt, "timeStamp",     {value: evt.timeStamp});
-    }
+		Object.defineProperty(fakeEvt, "eventPhase",    {value: evt.eventPhase});
+    Object.defineProperty(fakeEvt, "bubbles",       {value: evt.bubbles});
+    Object.defineProperty(fakeEvt, "cancelable",    {value: evt.cancelable});
+    Object.defineProperty(fakeEvt, "timeStamp",     {value: evt.timeStamp});
+
 
     Object.defineProperty(fakeEvt, "pageX",                {value: x});
     Object.defineProperty(fakeEvt, "pageY",                {value: y});
